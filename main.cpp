@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <GL/glew.h>
 #include <GL/glu.h>
 #include <GL/glfw.h>
@@ -9,26 +10,27 @@
 
 using namespace std;
 
+// global
+float glo_windowWidth = 600.f;
+float glo_windowHeight = 600.f;
+float glo_ratio = glo_windowWidth/glo_windowHeight;
+
 //Called when the window is resized
 void GLFWCALL handleResize(int width,int height)
 {
     //Tell OpenGL how to convert from coordinates to pixel values
     glViewport( 0, 0, width, height );
     glMatrixMode( GL_PROJECTION ); //Switch to setting the camera perspective
-
+    glo_windowWidth = static_cast<float>(width);
+    glo_windowHeight = static_cast<float>(height);
+    glo_ratio = glo_windowWidth/glo_windowHeight;
     //Set the camera perspective
     glLoadIdentity(); //reset the camera
-    gluPerspective( 45.0f,                      //camera angle
-                (GLfloat)width/(GLfloat)height, //The width to height ratio
-                 1.0f,                          //The near z clipping coordinate
-                100.0f );                       //The far z clipping coordinate
+    gluPerspective( 60.0f, glo_ratio, 1.0f, 100.0f );
 }
 
 int main()
 {
-   const int windowWidth = 600;
-   const int windowHeight = 600;
-
    int running = GL_TRUE;
 
    // Initialize GLFW
@@ -44,7 +46,7 @@ int main()
 
    // Open an OpenGL window
    glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 2);
-   if( !glfwOpenWindow( windowWidth, windowHeight, 0,0,0, 0,0,0, GLFW_WINDOW ) )
+   if( !glfwOpenWindow( glo_windowWidth, glo_windowHeight, 0,0,0, 0,0,0, GLFW_WINDOW ) )
    {
        glfwTerminate();
        exit( EXIT_FAILURE );
@@ -102,6 +104,23 @@ int main()
    // Get a handle for our buffers
    GLuint vertexPosition_modelspaceID = glGetAttribLocation(programID, "vertexPosition_modelspace");
 
+
+   // Get a handle for our "MVP" uniform
+   GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+
+   // Projection matrix : 60° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
+   glm::mat4 Projection = glm::perspective(60.0f, glo_ratio, 1.f, 100.0f);
+   // Camera matrix
+   glm::mat4 View       = glm::lookAt(
+                               glm::vec3(4,3,3), // Camera is at (4,3,3), in World Space
+                               glm::vec3(0,0,0), // and looks at the origin
+                               glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+                          );
+   // Model matrix : an identity matrix (model will be at the origin)
+   glm::mat4 Model      = glm::mat4(1.0f);
+   // Our ModelViewProjection : multiplication of our 3 matrices
+   glm::mat4 MVP        = Projection * View * Model; // Remember, matrix multiplication is the other way around
+
    cout << "Starting main loop." << endl;
    glClearColor(0.0f, 0.0f, 0.3f, 0.0f);
    // Main loop
@@ -116,6 +135,10 @@ int main()
        {
            // Use our shader
            glUseProgram(programID);
+
+           // Send our transformation to the currently bound shader,
+           // in the "MVP" uniform
+           glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
            // 1rst attribute buffer : vertices
            glEnableVertexAttribArray(0);
