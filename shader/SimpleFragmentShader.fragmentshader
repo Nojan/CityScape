@@ -1,12 +1,12 @@
 #version 120
 
-// Ouput data
-//out vec3 color;
+// Interpolated values from the vertex shaders
+varying vec3 fragmentColor;
 
-void main()
-{
+void main(){
 
-	// Output color = red, full opacity
-	gl_FragColor = vec4(1,0,0, 1);
+        // Output color = color specified in the vertex shader,
+        // interpolated between all 3 surrounding vertices
+        gl_FragColor = vec4(fragmentColor, 1);
 
 }
