@@ -1,7 +1,7 @@
 #ifndef ROOT_HPP
 #define ROOT_HPP
 
-#include "renderer.hpp"
+class Renderer;
 
 class Root {
 public:
@@ -14,7 +14,7 @@ public:
     bool IsRunning();
 
 private:
-    Renderer renderer;
+    Renderer* renderer;
     int running;
 };
 

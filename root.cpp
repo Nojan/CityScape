@@ -1,4 +1,5 @@
 #include "root.hpp"
+#include "renderer.hpp"
 
 #include <iostream>
 #include <stdlib.h>
@@ -22,10 +23,14 @@ void GLFWCALL handleResize(int width,int height)
 
 Root::Root()
 : running(GL_FALSE)
-{}
+{
+    renderer = new Renderer();
+}
 
 Root::~Root()
-{}
+{
+    delete renderer;
+}
 
 void Root::Init()
 {
@@ -76,12 +81,12 @@ void Root::Init()
 
     running = GL_TRUE;
 
-    renderer.Init();
+    renderer->Init();
 }
 
 void Root::Terminate()
 {
-    renderer.Terminate();
+    renderer->Terminate();
 
     glfwTerminate();
 }
@@ -90,7 +95,7 @@ void Root::Update()
 {
     running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
 
-    renderer.Update();
+    renderer->Update();
 }
 
 bool Root::IsRunning()
