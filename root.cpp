@@ -10,7 +10,7 @@
 using namespace std;
 
 //Called when the window is resized
-void GLFWCALL handleResize(int width,int height)
+void GLFWCALL handleWindowResize(int width, int height)
 {
     //Tell OpenGL how to convert from coordinates to pixel values
     glViewport( 0, 0, width, height );
@@ -19,6 +19,30 @@ void GLFWCALL handleResize(int width,int height)
     //Set the camera perspective
     glLoadIdentity(); //reset the camera
     gluPerspective( 60.0f, ratio, 1.0f, 100.0f );
+}
+
+//Called when a key state changed
+void GLFWCALL handleKeyboardEvent(int key, int state)
+{
+    cout << "Keyboard " << key << " " << state << endl;
+}
+
+//Called when the mouse move over the window
+void GLFWCALL handleMousePosition(int x, int y)
+{
+    cout << "Mouse (" << x << "," << y << ")" << endl;
+}
+
+//Called when a mouse button state changed
+void GLFWCALL handleMouseButton(int button, int state)
+{
+    cout << "Mouse button " << button << " " << state << endl;
+}
+
+//Called when the mouse move over the window
+void GLFWCALL handleMouseWheel(int wheel)
+{
+    cout << "Mouse wheel " << wheel << endl;
 }
 
 Root::Root()
@@ -77,7 +101,11 @@ void Root::Init()
         exit( EXIT_FAILURE );
     }
     // Callbacks
-    glfwSetWindowSizeCallback(handleResize);
+    glfwSetWindowSizeCallback(handleWindowResize);
+    glfwSetCharCallback(handleKeyboardEvent);
+    glfwSetMousePosCallback(handleMousePosition);
+    glfwSetMouseButtonCallback(handleMouseButton);
+    glfwSetMouseWheelCallback(handleMouseWheel);
 
     running = GL_TRUE;
 
