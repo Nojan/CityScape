@@ -5,8 +5,7 @@ class Renderer;
 
 class Root {
 public:
-    Root();
-    ~Root();
+    static Root& Instance();
 
     void Init();
     void Terminate();
@@ -14,8 +13,11 @@ public:
     bool IsRunning();
 
 private:
+    Root();
+    ~Root();
+
+private:
     Renderer* renderer;
     int running;
 };
-
 #endif

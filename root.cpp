@@ -45,6 +45,12 @@ void GLFWCALL handleMouseWheel(int wheel)
     cout << "Mouse wheel " << wheel << endl;
 }
 
+Root& Root::Instance()
+{
+    static Root instance;
+    return instance;
+}
+
 Root::Root()
 : running(GL_FALSE)
 {

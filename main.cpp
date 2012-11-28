@@ -7,18 +7,16 @@ using namespace std;
 
 int main()
 {
-    Root root;
-
-    root.Init();
+    Root::Instance().Init();
 
     cout << "Starting main loop." << endl;
     // Main loop
     do
     {
-        root.Update();
-    } while (root.IsRunning());
+        Root::Instance().Update();
+    } while (Root::Instance().IsRunning());
 
-    root.Terminate();
+    Root::Instance().Terminate();
 
     // Exit program
     exit( EXIT_SUCCESS );
