@@ -1,4 +1,6 @@
 #include "root.hpp"
+
+#include "camera.hpp"
 #include "renderer.hpp"
 
 #include <iostream>
@@ -24,25 +26,25 @@ void GLFWCALL handleWindowResize(int width, int height)
 //Called when a key state changed
 void GLFWCALL handleKeyboardEvent(int key, int state)
 {
-    cout << "Keyboard " << key << " " << state << endl;
+    Root::Instance().GetCamera()->HandleKeyboardEvent(key, state);
 }
 
 //Called when the mouse move over the window
 void GLFWCALL handleMousePosition(int x, int y)
 {
-    cout << "Mouse (" << x << "," << y << ")" << endl;
+    Root::Instance().GetCamera()->HandleMousePosition(x, y);
 }
 
 //Called when a mouse button state changed
 void GLFWCALL handleMouseButton(int button, int state)
 {
-    cout << "Mouse button " << button << " " << state << endl;
+    Root::Instance().GetCamera()->HandleMouseButton(button, state);
 }
 
 //Called when the mouse move over the window
 void GLFWCALL handleMouseWheel(int wheel)
 {
-    cout << "Mouse wheel " << wheel << endl;
+    Root::Instance().GetCamera()->HandleMouseWheel(wheel);
 }
 
 Root& Root::Instance()
@@ -54,12 +56,14 @@ Root& Root::Instance()
 Root::Root()
 : running(GL_FALSE)
 {
+    camera = new Camera();
     renderer = new Renderer();
 }
 
 Root::~Root()
 {
     delete renderer;
+    delete camera;
 }
 
 void Root::Init()
@@ -135,4 +139,9 @@ void Root::Update()
 bool Root::IsRunning()
 {
     return running;
+}
+
+Camera *const Root::GetCamera()
+{
+    return camera;
 }
