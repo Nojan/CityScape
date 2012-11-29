@@ -1,5 +1,7 @@
 #include "camera.hpp"
 
+#include <glm/gtx/transform.hpp>
+
 #include <iostream>
 
 using namespace std;
@@ -14,6 +16,8 @@ Camera::Camera()
 : mMoveMask(MV_NONE)
 , mUpdateView(true)
 , mUpdateProjection(true)
+, mMousePan(false)
+, mMousePosition(0.f)
 , mPosition(1.f, 0, 0)
 , mDirection(0, 0, 1.f)
 , mUp(0, 1.f, 0)
@@ -54,7 +58,7 @@ void Camera::Update()
     if(mUpdateView)
         mView = glm::lookAt(mPosition, mPosition+mDirection, mUp);
     if(mUpdateProjection)
-        mProjection = glm::perspective(60.0f, 4.f/3.f, 1.f, 100.0f);
+        mProjection = glm::perspective(60.0f, 4.f/3.f, 1.f, 100000.0f);
     if(mUpdateView || mUpdateProjection)
     {
         mProjectionView = mProjection*mView;
@@ -138,12 +142,26 @@ void Camera::HandleKeyboardEvent()
 
 void Camera::HandleMousePosition(int x, int y)
 {
-    //cout << "Mouse (" << x << "," << y << ")" << endl;
+    const glm::vec2 newMousePosition(x, y);
+    if(mMousePan)
+    {
+        const float gain = 0.1f;
+        const glm::vec2 vec = (newMousePosition-mMousePosition)*gain;
+
+        const glm::mat3 pitch = glm::mat3(glm::rotate(vec.x, mUp));
+        const glm::mat3 yaw = glm::mat3(glm::rotate(vec.y, mOrthoDirection));
+
+        mDirection = yaw * pitch * mDirection;
+        mUp = pitch * mUp;
+        mOrthoDirection = glm::cross(mDirection, mUp);
+        mUpdateView = true;
+    }
+    mMousePosition = newMousePosition;
 }
 
 void Camera::HandleMouseButton(int button, int state)
 {
-    cout << "Mouse Button " << button << " " << state << endl;
+    mMousePan = (button == GLFW_MOUSE_BUTTON_LEFT) && (state == GLFW_PRESS);
 }
 
 void Camera::HandleMouseWheel(int wheel)

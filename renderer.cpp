@@ -117,14 +117,15 @@ void Renderer::Init()
 
     // Setup Projection and Camera matrix
     Camera *const camera = Root::Instance().GetCamera();
-    camera->SetPosition(glm::vec3(4,3,3));
-    camera->SetDirection(glm::normalize(glm::vec3(4,3,3)*-1.f));
+    camera->SetPosition(glm::vec3(10,0,0));
+    camera->SetDirection(glm::normalize(glm::vec3(10,0,0)*-1.f));
     camera->SetUp(glm::vec3(0,1,0));
 
     // OpenGL Setting
     glClearColor(0.0f, 0.0f, 0.3f, 0.0f);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+    glEnable(GL_CULL_FACE);
 }
 
 void Renderer::Terminate()

@@ -38,8 +38,11 @@ public:
 private:
     bool mUpdateView;
     bool mUpdateProjection;
+    bool mMousePan;
 
     int mMoveMask;
+
+    glm::vec2 mMousePosition;
 
     glm::vec3 mPosition;
     glm::vec3 mDirection;
