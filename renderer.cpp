@@ -1,10 +1,14 @@
 #include "renderer.hpp"
 
+#include "camera.hpp"
+#include "root.hpp"
+
 #include <iostream>
 #include <stdlib.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <GL/glew.h>
-#include <GL/glu.h>
-#include <GL/glfw.h>
 
 using namespace std;
 
@@ -111,14 +115,11 @@ void Renderer::Init()
 
     texture = loadBMP_custom("../asset/uvtemplate.bmp");
 
-    // Projection matrix : 60° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-    projection = glm::perspective(60.0f, 4.f/3.f, 1.f, 100.0f);
-    // Camera matrix
-    view       = glm::lookAt(
-                        glm::vec3(4,3,3), // Camera is at (4,3,3), in World Space
-                        glm::vec3(0,0,0), // and looks at the origin
-                        glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
-                   );
+    // Setup Projection and Camera matrix
+    Camera *const camera = Root::Instance().GetCamera();
+    camera->SetPosition(glm::vec3(4,3,3));
+    camera->SetDirection(glm::normalize(glm::vec3(4,3,3)*-1.f));
+    camera->SetUp(glm::vec3(0,1,0));
 
     // OpenGL Setting
     glClearColor(0.0f, 0.0f, 0.3f, 0.0f);
@@ -131,6 +132,7 @@ void Renderer::Terminate()
     // Cleanup VBO
     glDeleteBuffers(1, &vertexbuffer);
     glDeleteBuffers(1, &uvbuffer);
+    glDeleteProgram(programID);
 }
 
 void Renderer::Update()
@@ -151,9 +153,7 @@ void Renderer::Update()
 
         // Model matrix : an identity matrix (model will be at the origin)
         glm::mat4 model = glm::mat4(1.0f);
-        // Our ModelViewProjection : multiplication of our 3 matrices
-        glm::mat4 MVP = projection * view * model; // Remember, matrix multiplication is the other way around
-
+        glm::mat4 MVP = Root::Instance().GetCamera()->ProjectionView() * model;
         // Send our transformation to the currently bound shader,
         // in the "MVP" uniform
         glUniformMatrix4fv(matrixID, 1, GL_FALSE, &MVP[0][0]);

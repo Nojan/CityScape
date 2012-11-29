@@ -23,12 +23,6 @@ void GLFWCALL handleWindowResize(int width, int height)
     gluPerspective( 60.0f, ratio, 1.0f, 100.0f );
 }
 
-//Called when a key state changed
-void GLFWCALL handleKeyboardEvent(int key, int state)
-{
-    Root::Instance().GetCamera()->HandleKeyboardEvent(key, state);
-}
-
 //Called when the mouse move over the window
 void GLFWCALL handleMousePosition(int x, int y)
 {
@@ -110,20 +104,23 @@ void Root::Init()
         cout << "Glew : GL_ARB_vertex_buffer_object not supported" << endl;
         exit( EXIT_FAILURE );
     }
+
     // Callbacks
+    glfwEnable( GLFW_STICKY_KEYS );
     glfwSetWindowSizeCallback(handleWindowResize);
-    glfwSetCharCallback(handleKeyboardEvent);
     glfwSetMousePosCallback(handleMousePosition);
     glfwSetMouseButtonCallback(handleMouseButton);
     glfwSetMouseWheelCallback(handleMouseWheel);
 
     running = GL_TRUE;
 
+    camera->Init();
     renderer->Init();
 }
 
 void Root::Terminate()
 {
+    camera->Terminate();
     renderer->Terminate();
 
     glfwTerminate();
@@ -133,6 +130,7 @@ void Root::Update()
 {
     running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
 
+    camera->Update();
     renderer->Update();
 }
 
