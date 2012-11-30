@@ -14,13 +14,7 @@ using namespace std;
 //Called when the window is resized
 void GLFWCALL handleWindowResize(int width, int height)
 {
-    //Tell OpenGL how to convert from coordinates to pixel values
-    glViewport( 0, 0, width, height );
-    glMatrixMode( GL_PROJECTION ); //Switch to setting the camera perspective
-    const float ratio = static_cast<float>(width)/static_cast<float>(height);
-    //Set the camera perspective
-    glLoadIdentity(); //reset the camera
-    gluPerspective( 60.0f, ratio, 1.0f, 100.0f );
+    Root::Instance().GetCamera()->HandleWindowResize(width, height);
 }
 
 //Called when the mouse move over the window

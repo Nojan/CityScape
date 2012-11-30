@@ -9,12 +9,21 @@
 
 class Camera {
 public:
+    struct perspective{
+        float fov;
+        float ratio;
+        float zNear;
+        float zFar;
+    };
+
     Camera();
     ~Camera();
 
     void Init();
     void Terminate();
     void Update();
+
+    perspective const& Perspective() const;
 
     glm::vec3 const& Position() const;
     void SetPosition(glm::vec3 const& position);
@@ -30,6 +39,7 @@ public:
     glm::mat4 const& ProjectionView() const;
 
     // Mouse and keyboard handle
+    void HandleWindowResize(int width, int height);
     void HandleKeyboardEvent();
     void HandleMousePosition(int x, int y);
     void HandleMouseButton(int button, int state);
@@ -41,6 +51,9 @@ private:
     bool mMousePan;
 
     int mMoveMask;
+    int mLastWheel;
+
+    perspective mPerspective;
 
     glm::vec2 mMousePosition;
 

@@ -17,12 +17,18 @@ Camera::Camera()
 , mUpdateView(true)
 , mUpdateProjection(true)
 , mMousePan(false)
+, mLastWheel(0)
 , mMousePosition(0.f)
 , mPosition(1.f, 0, 0)
 , mDirection(0, 0, 1.f)
 , mUp(0, 1.f, 0)
 , mOrthoDirection(glm::cross(mDirection, mUp))
-{}
+{
+    mPerspective.fov = 60.f;
+    mPerspective.ratio = 4.f/3.f;
+    mPerspective.zNear = 1.f;
+    mPerspective.zFar = 100.f;
+}
 
 Camera::~Camera()
 {}
@@ -58,13 +64,18 @@ void Camera::Update()
     if(mUpdateView)
         mView = glm::lookAt(mPosition, mPosition+mDirection, mUp);
     if(mUpdateProjection)
-        mProjection = glm::perspective(60.0f, 4.f/3.f, 1.f, 100000.0f);
+        mProjection = glm::perspective(mPerspective.fov, mPerspective.ratio, mPerspective.zNear, mPerspective.zFar);
     if(mUpdateView || mUpdateProjection)
     {
         mProjectionView = mProjection*mView;
         mUpdateView = false;
         mUpdateProjection = false;
     }
+}
+
+Camera::perspective const& Camera::Perspective() const
+{
+    return mPerspective;
 }
 
 glm::vec3 const& Camera::Position() const
@@ -117,6 +128,12 @@ glm::mat4 const& Camera::ProjectionView() const
     return mProjectionView;
 }
 
+void Camera::HandleWindowResize(int width, int height)
+{
+    mPerspective.ratio = static_cast<float>(width)/static_cast<float>(height);
+    mUpdateProjection = true;
+}
+
 void Camera::HandleKeyboardEvent()
 {
     if( glfwGetKey(GLFW_KEY_DOWN) )
@@ -166,6 +183,11 @@ void Camera::HandleMouseButton(int button, int state)
 
 void Camera::HandleMouseWheel(int wheel)
 {
-    cout << "Mouse wheel " << wheel << endl;
+    if (wheel < mLastWheel)
+        ++mPerspective.fov;
+    else
+        --mPerspective.fov;
+    mLastWheel = wheel;
+    mUpdateProjection = true;
 }
 
