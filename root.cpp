@@ -122,10 +122,13 @@ void Root::Terminate()
 
 void Root::Update()
 {
+    const double frameDuration = 1/60;
     running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
 
+    glfwSetTime(0);
     camera->Update();
     renderer->Update();
+    glfwSleep( frameDuration - glfwGetTime());
 }
 
 bool Root::IsRunning()
