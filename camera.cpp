@@ -58,7 +58,6 @@ void Camera::Update()
         if(MV_DOWN & mMoveMask)
             mPosition -= mDirection*moveSpeed;
         mUpdateView = true;
-        cout << "[" << mPosition.x << "," << mPosition.y << "," << mPosition.z << "]" << endl;
     }
 
     if(mUpdateView)
