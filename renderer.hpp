@@ -1,8 +1,7 @@
 #ifndef RENDERER_HPP
 #define RENDERER_HPP
 
-#include "shader.hpp"
-#include "texture.hpp"
+#include "renderable.hpp"
 
 class Renderer {
 public:
@@ -14,10 +13,9 @@ public:
     void Update();
 
 private:
-    GLuint vertexbuffer;
-    GLuint texture;
-    GLuint uvbuffer;
     GLuint programID;
+    Renderable renderable1;
+    Renderable renderable2;
 };
 
 #endif
