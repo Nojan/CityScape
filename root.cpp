@@ -72,7 +72,13 @@ void Root::Init()
     glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 2);
     const int defaultWidth = 800;
     const int defaultHeight = 600;
-    if( !glfwOpenWindow( defaultWidth, defaultHeight, 0,0,0, 0,0,0, GLFW_WINDOW ) )
+    const int defaultRed = 0;
+    const int defaultGreen = 0;
+    const int defaultBlue = 0;
+    const int defaultAlpha = 0;
+    const int defaultDepth = 8;
+    const int defaultStencil = 0;
+    if( !glfwOpenWindow( defaultWidth, defaultHeight, defaultRed,defaultGreen,defaultBlue,defaultAlpha, defaultDepth, defaultStencil, GLFW_WINDOW ) )
     {
         glfwTerminate();
         exit( EXIT_FAILURE );
