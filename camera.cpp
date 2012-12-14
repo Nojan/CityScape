@@ -95,7 +95,7 @@ glm::vec3 const& Camera::Direction() const
 
 void Camera::SetDirection(glm::vec3 const& direction)
 {
-    mDirection = direction;
+    mDirection = glm::normalize(direction);
     mOrthoDirection = glm::cross(mDirection, mUp);
     mUpdateView = true;
 }
@@ -107,7 +107,7 @@ glm::vec3 const& Camera::Up() const
 
 void Camera::SetUp(glm::vec3 const& up)
 {
-    mUp = up;
+    mUp = glm::normalize(up);
     mOrthoDirection = glm::cross(mDirection, mUp);
     mUpdateView = true;
 }
@@ -167,8 +167,8 @@ void Camera::HandleMousePosition(int x, int y)
         const glm::mat3 pitch = glm::mat3(glm::rotate(vec.x, mUp));
         const glm::mat3 yaw = glm::mat3(glm::rotate(vec.y, mOrthoDirection));
 
-        mDirection = yaw * pitch * mDirection;
-        mUp = pitch * mUp;
+        mDirection = glm::normalize(yaw * pitch * mDirection);
+        mUp = glm::normalize(pitch * mUp);
         mOrthoDirection = glm::cross(mDirection, mUp);
         mUpdateView = true;
     }
