@@ -14,6 +14,7 @@ public:
 
 private:
     GLuint programID;
+    GLuint programDebugID;
     Renderable renderable1;
     Renderable renderable2;
 };

@@ -1,0 +1,10 @@
+#version 120
+
+// Interpolated values from the vertex shaders
+varying vec3 color;
+
+
+void main()
+{
+    gl_FragColor = vec4(color, 0);
+}
