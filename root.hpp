@@ -22,5 +22,9 @@ private:
     Camera* camera;
     Renderer* renderer;
     int running;
+
+    // Performance counter
+    int framesCounter;
+    double framesDuration;
 };
 #endif

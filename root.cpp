@@ -43,6 +43,8 @@ Root& Root::Instance()
 
 Root::Root()
 : running(GL_FALSE)
+, framesCounter(0)
+, framesDuration(0)
 {
     camera = new Camera();
     renderer = new Renderer();
@@ -128,13 +130,22 @@ void Root::Terminate()
 
 void Root::Update()
 {
-    const double frameDuration = 1/60;
+    const double frameLimiter = 1/60;
     running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
 
     glfwSetTime(0);
     camera->Update();
     renderer->Update();
-    glfwSleep( frameDuration - glfwGetTime());
+    const double frameDuration = glfwGetTime();
+
+    ++framesCounter;
+    framesDuration += frameDuration;
+    glfwSleep( frameLimiter - frameDuration);
+    if(framesCounter > 100)
+    {
+        const double avgFrameDuration = framesDuration / static_cast<double>(framesCounter);
+        std::cout << "Average frame : " << avgFrameDuration << "s" << std::endl;
+    }
 }
 
 bool Root::IsRunning()
