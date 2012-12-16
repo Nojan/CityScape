@@ -39,10 +39,13 @@ void Renderer::Init()
     //glEnable(GL_CULL_FACE);
 
     data = Renderable::MakeDataFrom("../asset/cube.obj", "../asset/uvtemplate.bmp");
-    scene.resize(2);
+    scene.resize(20);
     glm::mat4 identity(1.f);
-    scene[0].Init(identity, data);
-    scene[1].Init(glm::translate(identity, glm::vec3(-3.f,0.f,2.f)), data);
+    for(size_t i=0; i<scene.size(); ++i)
+    {
+        identity = glm::translate(identity, glm::vec3(0.f,0.f,4.f));
+        scene[i].Init(identity, data);
+    }
 }
 
 void Renderer::Terminate()

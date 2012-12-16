@@ -12,11 +12,13 @@ class Renderable {
 public:
 
     struct Data {
+        GLuint indexbuffer;
         GLuint vertexbuffer;
         GLuint vertexNormalbuffer;
         GLuint texture;
         GLuint uvbuffer;
 
+        std::vector<unsigned short> index;
         std::vector<glm::vec3> vertexPosition;
         std::vector<glm::vec3> vertexNormal;
         std::vector<glm::vec2> uv;

@@ -11,8 +11,12 @@ using namespace std;
 Renderable::Data const* Renderable::MakeDataFrom(char const * pathToObj, char const * pathToTexture)
 {
     Renderable::Data * data = new Renderable::Data();
-    loadOBJ(pathToObj, data->vertexPosition, data->uv, data->vertexNormal);
+    loadIndexedOBJ(pathToObj, data->index, data->vertexPosition, data->uv, data->vertexNormal);
     data->texture = loadBMP_custom(pathToTexture);
+
+    glGenBuffers(1, &(data->indexbuffer));
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, data->indexbuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, data->index.size() * sizeof(unsigned short), data->index.data() , GL_STATIC_DRAW);
 
     glGenBuffers(1, &(data->vertexbuffer));
     glBindBuffer(GL_ARRAY_BUFFER, data->vertexbuffer);
@@ -46,6 +50,7 @@ void Renderable::Init(glm::mat4 const & modelTransformMatrix, Data const* data)
 void Renderable::Terminate()
 {
     // Cleanup VBO in mData
+    //glDeleteBuffers(1, &indexbuffer);
     //glDeleteBuffers(1, &vertexbuffer);
     //glDeleteBuffers(1, &vertexNormalbuffer);
     //glDeleteBuffers(1, &uvbuffer);
@@ -116,8 +121,11 @@ void Renderable::Draw(GLuint programID)
         (void*)0                      // array buffer offset
     );
 
+    // 4rd attribute buffer : index
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mData->indexbuffer);
+
     // Draw the triangleS !
-    glDrawArrays(GL_TRIANGLES, 0, 12*3); // From index 0 to 12*3 -> 12 triangles
+    glDrawElements(GL_TRIANGLES, mData->index.size(), GL_UNSIGNED_SHORT, (void*)0);
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
