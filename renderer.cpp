@@ -39,12 +39,16 @@ void Renderer::Init()
     //glEnable(GL_CULL_FACE);
 
     data = Renderable::MakeDataFrom("../asset/cube.obj", "../asset/uvtemplate.bmp");
-    renderable.Init(glm::mat4(1.f), data);
+    scene.resize(2);
+    glm::mat4 identity(1.f);
+    scene[0].Init(identity, data);
+    scene[1].Init(glm::translate(identity, glm::vec3(-3.f,0.f,2.f)), data);
 }
 
 void Renderer::Terminate()
 {
-    renderable.Terminate();
+    for(size_t i=0; i<scene.size(); ++i)
+        scene[i].Terminate();
     glDeleteProgram(programID);
     glDeleteProgram(programDebugID);
 }
@@ -61,7 +65,8 @@ void Renderer::Update()
         glUseProgram(programDebugID);
         glPointSize(1.f);
         glLineWidth(2.f);
-        renderable.DrawDebug(programDebugID);
+        for(size_t i=0; i<scene.size(); ++i)
+            scene[i].DrawDebug(programDebugID);
     }
     //lighting
     {
@@ -76,7 +81,8 @@ void Renderer::Update()
 
     // Rendering
     glUseProgram(programID);
-    renderable.Draw(programID);
+    for(size_t i=0; i<scene.size(); ++i)
+        scene[i].Draw(programID);
     glUseProgram(0);
 
     // Swap front and back rendering buffers

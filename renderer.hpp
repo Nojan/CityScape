@@ -16,7 +16,7 @@ private:
     GLuint programID;
     GLuint programDebugID;
     Renderable::Data const * data;
-    Renderable renderable;
+    std::vector<Renderable> scene;
 };
 
 #endif
