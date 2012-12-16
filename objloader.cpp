@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string>
 #include <cstring>
+#include <iostream>
 
 #include <glm/glm.hpp>
 
@@ -163,11 +164,12 @@ void indexVBO_slow(
 )
 {
     // For each input vertex
-    for ( unsigned int i=0; i<in_vertices.size(); i++ ){
+    const size_t verticesSize = in_vertices.size();
+    for ( size_t i=0; i<verticesSize; i++ ){
 
         // Try to find a similar vertex in out_XXXX
         unsigned short index;
-        bool found = getSimilarVertexIndex(in_vertices[i], in_uvs[i], in_normals[i],     out_vertices, out_uvs, out_normals, index);
+        bool found = getSimilarVertexIndex(in_vertices[i], in_uvs[i], in_normals[i], out_vertices, out_uvs, out_normals, index);
 
         if ( found ){ // A similar vertex is already in the VBO, use it instead !
             out_indices.push_back( index );
@@ -177,6 +179,8 @@ void indexVBO_slow(
             out_normals .push_back( in_normals[i]);
             out_indices .push_back( (unsigned short)out_vertices.size() - 1 );
         }
+        const float progress = static_cast<float>(index) / static_cast<float>(verticesSize);
+        //std::cout << "(" << progress*100.f << "%)" << std::endl;
     }
 }
 
@@ -193,6 +197,8 @@ void loadIndexedOBJ(
     std::vector<glm::vec2> temp_uvs;
     std::vector<glm::vec3> temp_normals;
 
+    std::cout << "loadOBJ..." << std::endl;
     loadOBJ(path, temp_vertices, temp_uvs, temp_normals);
+    std::cout << "indexVBO_slow..." << std::endl;
     indexVBO_slow(temp_vertices, temp_uvs, temp_normals, out_indices, out_vertices, out_uvs, out_normals);
 }
