@@ -38,14 +38,13 @@ void Renderer::Init()
     glDepthFunc(GL_LESS);
     //glEnable(GL_CULL_FACE);
 
-    renderable1.Init(glm::mat4(1.f), "../asset/cube.obj", "../asset/uvtemplate.bmp");
-    renderable2.Init( glm::translate(glm::mat4(1.f), glm::vec3(-3.f,0.f,2.f)), "../asset/cube.obj", "../asset/uvtemplate.bmp" );
+    data = Renderable::MakeDataFrom("../asset/cube.obj", "../asset/uvtemplate.bmp");
+    renderable.Init(glm::mat4(1.f), data);
 }
 
 void Renderer::Terminate()
 {
-    renderable1.Terminate();
-    renderable2.Terminate();
+    renderable.Terminate();
     glDeleteProgram(programID);
     glDeleteProgram(programDebugID);
 }
@@ -62,8 +61,7 @@ void Renderer::Update()
         glUseProgram(programDebugID);
         glPointSize(1.f);
         glLineWidth(2.f);
-        renderable1.DrawDebug(programDebugID);
-        renderable2.DrawDebug(programDebugID);
+        renderable.DrawDebug(programDebugID);
     }
     //lighting
     {
@@ -78,8 +76,7 @@ void Renderer::Update()
 
     // Rendering
     glUseProgram(programID);
-    renderable1.Draw(programID);
-    renderable2.Draw(programID);
+    renderable.Draw(programID);
     glUseProgram(0);
 
     // Swap front and back rendering buffers
