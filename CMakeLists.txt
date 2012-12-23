@@ -3,4 +3,13 @@ cmake_minimum_required(VERSION 2.8)
 aux_source_directory(. SRC_LIST)
 include_directories(include)
 add_executable(${PROJECT_NAME} ${SRC_LIST})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} glfw glew32 glu32 opengl32)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    SET(EXTRA_LIBS ${EXTRA_LIBS} GLEW GLU GL)
+endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+
+if(WIN32)
+    SET(EXTRA_LIBS ${EXTRA_LIBS} glew32 glu32 opengl32 )
+endif(WIN32)
+
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} glfw ${EXTRA_LIBS} )
