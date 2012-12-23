@@ -165,6 +165,7 @@ void indexVBO_slow(
 {
     // For each input vertex
     const size_t verticesSize = in_vertices.size();
+    assert(verticesSize < static_cast<unsigned int>(static_cast<unsigned short>(-1)));
     for ( size_t i=0; i<verticesSize; i++ ){
 
         // Try to find a similar vertex in out_XXXX
