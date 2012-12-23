@@ -1,3 +1,5 @@
+//from http://www.opengl-tutorial.org/
+
 #ifndef OBJLOADER_H
 #define OBJLOADER_H
 

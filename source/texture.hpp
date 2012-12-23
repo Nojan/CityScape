@@ -1,3 +1,5 @@
+//from http://www.opengl-tutorial.org/
+
 #ifndef TEXTURE_HPP
 #define TEXTURE_HPP
 

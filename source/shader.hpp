@@ -1,3 +1,5 @@
+//from http://www.opengl-tutorial.org/
+
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
