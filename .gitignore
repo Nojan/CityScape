@@ -1,1 +1,8 @@
 Bin/*
+CMakeFiles/*
+
+*.user
+
+CMakeCache.txt
+Makefile
+
