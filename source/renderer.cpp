@@ -38,13 +38,14 @@ void Renderer::Init()
     glDepthFunc(GL_LESS);
     //glEnable(GL_CULL_FACE);
 
-    data = Renderable::MakeDataFrom("../asset/cube.obj", "../asset/uvtemplate.bmp");
+    renderableInstance = RenderableInstance::MakeInstanceFrom("../asset/cube.obj", "../asset/uvtemplate.bmp");
+    renderableInstance->Bind();
     scene.resize(20);
     glm::mat4 identity(1.f);
     for(size_t i=0; i<scene.size(); ++i)
     {
         identity = glm::translate(identity, glm::vec3(0.f,0.f,4.f));
-        scene[i].Init(identity, data);
+        scene[i].Init(identity, renderableInstance);
     }
 }
 
@@ -54,6 +55,7 @@ void Renderer::Terminate()
         scene[i].Terminate();
     glDeleteProgram(programID);
     glDeleteProgram(programDebugID);
+    renderableInstance->Unbind();
 }
 
 void Renderer::Update()
