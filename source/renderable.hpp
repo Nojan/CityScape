@@ -8,6 +8,8 @@
 
 #include <vector>
 
+class Texture2D;
+
 class RenderableInstance {
 public:
     static RenderableInstance * MakeInstanceFrom(char const * pathToObj, char const * pathToTexture);
@@ -23,18 +25,21 @@ public:
     GLuint VertexId() const;
     GLuint NormalId() const;
     GLuint UvId() const;
-    GLuint texture; //todo...
+    GLuint TextureId() const;
+
 
     std::vector<unsigned short> index;
     std::vector<glm::vec3> vertexPosition;
     std::vector<glm::vec3> vertexNormal;
     std::vector<glm::vec2> uv;
+    Texture2D* texture;
 
 private:
     GLuint indexbuffer;
     GLuint vertexbuffer;
     GLuint vertexNormalbuffer;
     GLuint uvbuffer;
+    GLuint texturebuffer;
 
     bool bind;
 };

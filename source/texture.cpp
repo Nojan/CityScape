@@ -1,4 +1,4 @@
-//from http://www.opengl-tutorial.org/
+#include "texture.hpp"
 
 #include <assert.h>
 #include <stdio.h>
@@ -8,18 +8,41 @@
 #include <GL/glew.h>
 #include <GL/glfw.h>
 
+Texture2D::Texture2D()
+: data(NULL)
+, height(0)
+, width(0)
+{}
 
-GLuint loadBMP_custom(const char * imagepath){
+Texture2D::~Texture2D()
+{
+    delete[] data;
+}
 
-	printf("Reading image %s\n", imagepath);
+char const * const Texture2D::getData() const
+{
+    return data;
+}
+
+unsigned int Texture2D::getHeight() const
+{
+    return height;
+}
+
+unsigned int Texture2D::getWidth() const
+{
+    return width;
+}
+
+void Texture2D::loadBMP_custom(const char * imagepath, Texture2D & texture)
+{
+    assert(NULL == texture.data);
+    printf("Reading image %s\n", imagepath);
 
 	// Data read from the header of the BMP file
 	unsigned char header[54];
 	unsigned int dataPos;
 	unsigned int imageSize;
-	unsigned int width, height;
-	// Actual RGB data
-	unsigned char * data;
 
 	// Open the file
 	FILE * file = fopen(imagepath,"rb");
@@ -37,44 +60,24 @@ GLuint loadBMP_custom(const char * imagepath){
     assert( *(int*)&(header[0x1C]) ==24 );
 
 	// Read the information about the image
-	dataPos    = *(int*)&(header[0x0A]);
-	imageSize  = *(int*)&(header[0x22]);
-	width      = *(int*)&(header[0x12]);
-	height     = *(int*)&(header[0x16]);
+    dataPos        = *(int*)&(header[0x0A]);
+    imageSize      = *(int*)&(header[0x22]);
+    texture.width  = *(int*)&(header[0x12]);
+    texture.height = *(int*)&(header[0x16]);
 
 	// Some BMP files are misformatted, guess missing information
-	if (imageSize==0)    imageSize=width*height*3; // 3 : one byte for each Red, Green and Blue component
+    if (imageSize==0)    imageSize=texture.width*texture.height*3; // 3 : one byte for each Red, Green and Blue component
 	if (dataPos==0)      dataPos=54; // The BMP header is done that way
 
 	// Create a buffer
-	data = new unsigned char [imageSize];
+    texture.data = new char [imageSize];
 
-	// Read the actual data from the file into the buffer
-	fread(data,1,imageSize,file);
+    fread(texture.data, 1, imageSize, file);
 
-	// Everything is in memory now, the file wan be closed
 	fclose (file);
-
-	// Create one OpenGL texture
-	GLuint textureID;
-	glGenTextures(1, &textureID);
-	
-	// "Bind" the newly created texture : all future texture functions will modify this texture
-	glBindTexture(GL_TEXTURE_2D, textureID);
-
-	// Give the image to OpenGL
-	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
-
-	// ... nice trilinear filtering.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	// Return the ID of the texture we just created
-	return textureID;
 }
+
+//from http://www.opengl-tutorial.org/
 
 GLuint loadTGA_glfw(const char * imagepath){
 

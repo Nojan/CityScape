@@ -10,32 +10,44 @@ using namespace std;
 
 RenderableInstance::RenderableInstance()
 : bind(false)
+, texture(new Texture2D())
 {}
 
 RenderableInstance::~RenderableInstance()
 {
     assert(false == bind);
+    delete texture;
 }
 
 void RenderableInstance::Bind()
 {
     assert(false == bind);
 
-    glGenBuffers(1, &(indexbuffer));
+    glGenBuffers(1, &indexbuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, index.size() * sizeof(unsigned short), index.data() , GL_STATIC_DRAW);
 
-    glGenBuffers(1, &(vertexbuffer));
+    glGenBuffers(1, &vertexbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
     glBufferData(GL_ARRAY_BUFFER, vertexPosition.size()*sizeof(glm::vec3), vertexPosition.data(), GL_STATIC_DRAW);
 
-    glGenBuffers(1, &(vertexNormalbuffer));
+    glGenBuffers(1, &vertexNormalbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexNormalbuffer);
     glBufferData(GL_ARRAY_BUFFER, vertexNormal.size()*sizeof(glm::vec3), vertexNormal.data(), GL_STATIC_DRAW);
 
-    glGenBuffers(1, &(uvbuffer));
+    glGenBuffers(1, &uvbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
     glBufferData(GL_ARRAY_BUFFER, uv.size()*sizeof(glm::vec2), uv.data(), GL_STATIC_DRAW);
+
+    glGenTextures(1, &texturebuffer);
+    glBindTexture(GL_TEXTURE_2D, texturebuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->getWidth(), texture->getHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, texture->getData());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     bind = true;
 }
@@ -64,6 +76,12 @@ GLuint RenderableInstance::UvId() const
     return uvbuffer;
 }
 
+GLuint RenderableInstance::TextureId() const
+{
+    assert(true == bind);
+    return texturebuffer;
+}
+
 void RenderableInstance::Unbind()
 {
     assert(true == bind);
@@ -72,6 +90,8 @@ void RenderableInstance::Unbind()
     glDeleteBuffers(1, &vertexbuffer);
     glDeleteBuffers(1, &vertexNormalbuffer);
     glDeleteBuffers(1, &uvbuffer);
+    glDeleteBuffers(1, &texturebuffer);
+
 
     bind = false;
 }
@@ -85,7 +105,7 @@ RenderableInstance * RenderableInstance::MakeInstanceFrom(char const * pathToObj
 {
     RenderableInstance * instance = new RenderableInstance();
     loadIndexedOBJ(pathToObj, instance->index, instance->vertexPosition, instance->uv, instance->vertexNormal);
-    instance->texture = loadBMP_custom(pathToTexture);
+    Texture2D::loadBMP_custom(pathToTexture, *(instance->texture));
 
     return instance;
 }
@@ -134,8 +154,7 @@ void Renderable::Draw(GLuint programID)
 
     // Bind our texture in Texture Unit 0
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, mInstance->texture);
-    // Set our "myTextureSampler" sampler to user Texture Unit 0
+    glBindTexture(GL_TEXTURE_2D, mInstance->TextureId());
     glUniform1i(textureID, 0);
 
     // 1rst attribute buffer : vertices
