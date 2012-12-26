@@ -4,6 +4,8 @@
 #include "root.hpp"
 #include "shader.hpp"
 
+#include "buildingGenerator.hpp"
+
 #include <iostream>
 #include <stdlib.h>
 
@@ -38,7 +40,7 @@ void Renderer::Init()
     glDepthFunc(GL_LESS);
     //glEnable(GL_CULL_FACE);
 
-    renderableInstance = RenderableInstance::MakeInstanceFrom("../asset/cube.obj", "../asset/uvtemplate.bmp");
+    renderableInstance = Building_Generator::GenerateBox(1, 1, 1);
     renderableInstance->Bind();
     scene.resize(20);
     glm::mat4 identity(1.f);
