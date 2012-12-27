@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <random>
 
 using namespace std;
 using namespace glm;
@@ -45,11 +46,33 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         const size_t windowPerRow = width/windowSize;
         const size_t windowPerColumn = height/windowSize;
         Texture2D::rgb currentColor = white;
+        srand(12);
         for(size_t row = 0; row<windowPerColumn; row++)
         {
             const size_t rowOffset = row*windowSize*width;
+            int r = 0;
+            int nb = 0;
             for(size_t column = 0; column<windowPerRow; column++)
             {
+                if(nb>0)
+                {
+                    nb--;
+                }
+                else
+                {
+                    r = rand()%10;
+                    if(r<2)
+                    {
+                        nb = rand()%6;
+                        if(r==0)
+                            currentColor = white;
+                        else
+                            currentColor = grey;
+                    }
+                    else
+                        currentColor = black;
+                }
+
                 SetWindowColor(textureData + (rowOffset + column*windowSize), currentColor, width, windowSize );
             }
         }
