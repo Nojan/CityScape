@@ -6,11 +6,11 @@
 
 using namespace std;
 
-#define MV_NONE  0b00000000
-#define MV_LEFT  0b00000001
-#define MV_RIGHT 0b00000010
-#define MV_UP    0b00000100
-#define MV_DOWN  0b00001000
+#define MV_NONE  0
+#define MV_LEFT  1
+#define MV_RIGHT 2
+#define MV_UP    4
+#define MV_DOWN  8
 
 Camera::Camera()
 : mMoveMask(MV_NONE)
