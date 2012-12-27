@@ -11,6 +11,51 @@ using namespace glm;
 
 namespace Building_Generator
 {
+
+void SetWindowColor(Texture2D::rgb * textureData, Texture2D::rgb color, size_t width, size_t windowSize )
+{
+    for(size_t i=1; i+1<windowSize; ++i )
+    {
+        const size_t iOfsset = i*(width-windowSize);
+        for(size_t j=1; j+1<windowSize; ++j)
+        {
+            textureData[iOfsset + j] = color;
+        }
+    }
+}
+
+void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsigned int height = 512, unsigned int windowSize = 8)
+    {
+        assert(windowSize>2);
+        assert(width>=windowSize);
+        assert(width>=windowSize);
+        const size_t textureSize = static_cast<size_t>(width*height);
+
+        Texture2D::rgb * textureData = new Texture2D::rgb[textureSize];
+
+        const Texture2D::rgb black = {0, 0, 0};
+        const Texture2D::rgb grey  = {128, 128, 128};
+        const Texture2D::rgb white = {255, 255, 255};
+        // Tout en noir
+        for(size_t i=0; i< textureSize; ++i)
+        {
+            textureData[i] = black;
+        }
+
+        const size_t windowPerRow = width/windowSize;
+        const size_t windowPerColumn = height/windowSize;
+        Texture2D::rgb currentColor = white;
+        for(size_t row = 0; row<windowPerColumn; row++)
+        {
+            const size_t rowOffset = row*windowSize*width;
+            for(size_t column = 0; column<windowPerRow; column++)
+            {
+                SetWindowColor(textureData + (rowOffset + column*windowSize), currentColor, width, windowSize );
+            }
+        }
+        texture.setTexture(textureData, width, height);
+    }
+
     class Mesh
     {
     public:
@@ -92,12 +137,12 @@ namespace Building_Generator
     const unsigned int windowSize = 1;
 
     RenderableInstance * GenerateBox(unsigned int width, unsigned int length, unsigned int height)
-	{
-		assert( width>0 && length>0 && height>0 );
+    {
+        assert( width>0 && length>0 && height>0 );
 
-		const float widthf  = static_cast<float>(windowSize*width);
-		const float lengthf = static_cast<float>(windowSize*length);
-		const float heightf = static_cast<float>(windowSize*height);
+        const float widthf  = static_cast<float>(windowSize*width);
+        const float lengthf = static_cast<float>(windowSize*length);
+        const float heightf = static_cast<float>(windowSize*height);
 
         RenderableInstance * instance = new RenderableInstance();
 
@@ -133,8 +178,8 @@ namespace Building_Generator
         instance->vertexNormal.insert(instance->vertexNormal.end(), mesh.vertexNormal.begin(), mesh.vertexNormal.end());
         instance->uv.insert(instance->uv.end(), mesh.uv.begin(), mesh.uv.end());
 
-        Texture2D::loadBMP_custom("../asset/uvtemplate.bmp", *(instance->texture));
+        GenerateBuildingTexture(*(instance->texture));
 
         return instance;
-	}
+    }
 }
