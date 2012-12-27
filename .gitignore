@@ -1,8 +1,26 @@
+# Repertoire de sortie de la compilation
 Bin/*
+
+# Fichiers CMake gererable
 CMakeFiles/*
+CMakeCache.txt
+*.cmake
+
+# Script de build, genere par CMake
+Makefile
+
+# Visual Studio, genere par CMake
+*.vcxproj*
+*.sln
+*.suo
+*.sdf
+
+# Binaire et Lib pour Visual Studio. Ne font pas partie du repository git
+*.dll
+*.lib
 
 *.user
 
-CMakeCache.txt
-Makefile
+
+
 
