@@ -77,8 +77,8 @@ void Renderer::Update()
     }
     //lighting
     {
-        GLfloat DiffuseLight[] = {0.f, 0.f, 1.f};
-        GLfloat AmbientLight[] = {0.1f, 0.1f, 0.1f};
+        GLfloat DiffuseLight[] = {0.f, 0.f, 0.f};
+        GLfloat AmbientLight[] = {1.f, 1.f, 1.f};
         GLfloat LightPosition[] = {5.f, 5.f, 5.f, 0.f};
 
         glLightfv (GL_LIGHT0, GL_DIFFUSE, DiffuseLight);
