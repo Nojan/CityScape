@@ -34,8 +34,8 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         Texture2D::rgb * textureData = new Texture2D::rgb[textureSize];
 
         const Texture2D::rgb black = {0, 0, 0};
-        const Texture2D::rgb grey  = {128, 128, 128};
-        const Texture2D::rgb white = {255, 255, 255};
+        const Texture2D::rgb grey  = {(char)128, (char)128, (char)128};
+        const Texture2D::rgb white = {(char)255, (char)255, (char)255};
         // Tout en noir
         for(size_t i=0; i< textureSize; ++i)
         {

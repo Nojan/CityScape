@@ -13,4 +13,9 @@ if(WIN32)
     SET(EXTRA_LIBS ${EXTRA_LIBS} glew32 glu32 opengl32 )
 endif(WIN32)
 
+## Compiler flags
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "-std=c++0x")
+endif()
+
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} glfw ${EXTRA_LIBS} )
