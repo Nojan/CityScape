@@ -9,34 +9,42 @@
 #include <GL/glfw.h>
 
 Texture2D::Texture2D()
-: data(NULL)
-, height(0)
-, width(0)
+: mData(NULL)
+, mHeight(0)
+, mWidth(0)
 {}
+
+void Texture2D::setTexture(rgb * data, unsigned int height, unsigned int width)
+{
+    assert(NULL == mData);
+    mData = data;
+    mHeight = height;
+    mWidth = width;
+}
 
 Texture2D::~Texture2D()
 {
-    delete[] data;
+    delete[] mData;
 }
 
 char const * const Texture2D::getData() const
 {
-    return &(data[0].r);
+    return &(mData[0].r);
 }
 
 unsigned int Texture2D::getHeight() const
 {
-    return height;
+    return mHeight;
 }
 
 unsigned int Texture2D::getWidth() const
 {
-    return width;
+    return mWidth;
 }
 
 void Texture2D::loadBMP_custom(const char * imagepath, Texture2D & texture)
 {
-    assert(NULL == texture.data);
+    assert(NULL == texture.mData);
     printf("Reading image %s\n", imagepath);
 
     // Data read from the header of the BMP file
@@ -64,17 +72,17 @@ void Texture2D::loadBMP_custom(const char * imagepath, Texture2D & texture)
     // Read the information about the image
     dataPos        = *(int*)&(header[0x0A]);
     imageSize      = *(int*)&(header[0x22]);
-    texture.width  = *(int*)&(header[0x12]);
-    texture.height = *(int*)&(header[0x16]);
+    texture.mWidth  = *(int*)&(header[0x12]);
+    texture.mHeight = *(int*)&(header[0x16]);
 
     // Some BMP files are misformatted, guess missing information
-    if (imageSize==0)    imageSize=texture.width*texture.height;
+    if (imageSize==0)    imageSize=texture.mWidth*texture.mHeight;
     if (dataPos==0)      dataPos=headerSize; // The BMP header is done that way
 
     // Create a buffer
-    texture.data = new rgb [imageSize];
+    texture.mData = new rgb [imageSize];
 
-    fread(texture.data, 1, imageSize, file);
+    fread(texture.mData, 1, imageSize, file);
 
     fclose (file);
 }
