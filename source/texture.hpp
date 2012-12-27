@@ -3,6 +3,13 @@
 
 class Texture2D
 {
+    struct rgb
+    {
+        char r;
+        char g;
+        char b;
+    };
+
 public:
     Texture2D();
     ~Texture2D();
@@ -14,12 +21,10 @@ public:
     unsigned int getWidth() const;
 
 private:
-    char * data;
+    rgb * data;
     unsigned int height;
     unsigned int width;
 };
 
-//GLuint loadTGA_glfw(const char * imagepath); //need MAJ
-//GLuint loadDDS(const char * imagepath); //need MAj
 
 #endif
