@@ -16,7 +16,7 @@ void SetWindowColor(Texture2D::rgb * textureData, Texture2D::rgb color, size_t w
 {
     for(size_t i=1; i+1<windowSize; ++i )
     {
-        const size_t iOfsset = i*(width-windowSize);
+        const size_t iOfsset = i*width;
         for(size_t j=1; j+1<windowSize; ++j)
         {
             textureData[iOfsset + j] = color;
