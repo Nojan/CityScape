@@ -179,6 +179,16 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         float periRatio = widthRatio;
         float lastPeriRatio = 0.f;
 
+        //roof
+        rotation = rotate(rotation, -90.f, vec3(1.f, 0.f, 0.f)); //WTF not rad ?
+        CreateQuad(subMesh, widthf, lengthf, vec2(0.f, 0.f), vec2(0.f, 0.f));
+        subMesh.Transform(mat3(rotation), vec3(0.f, 0.f, 0.f));
+        subMesh.Transform(mat3(1.f), vec3(-widthf*0.5f, heightf, lengthf*0.5f));
+        mesh.AppendMesh(subMesh);
+
+        //wall
+        rotation = mat4(1.f);
+        subMesh.Clear();
         CreateQuad(subMesh, widthf, heightf, vec2(0.f, 0.f), vec2(periRatio, heightRatio));
         lastPeriRatio = periRatio;
         subMesh.Transform(mat3(rotation), vec3(-widthf*0.5f, 0.f, lengthf*0.5f));
