@@ -28,36 +28,56 @@ void Renderer::Init()
     programDebugID = LoadShaders( "../shader/DebugVertexShader.vertexshader", "../shader/DebugFragmentShader.fragmentshader" );
     cout << "Shader loaded." << endl;
 
-    // Setup Projection and Camera matrix
-    Camera *const camera = Root::Instance().GetCamera();
-    camera->SetPosition(glm::vec3(10,0,0));
-    camera->SetDirection(glm::normalize(glm::vec3(10,0,0)*-1.f));
-    camera->SetUp(glm::vec3(0,1,0));
-
     // OpenGL Setting
     glClearColor(0.0f, 0.0f, 0.3f, 0.0f);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     //glEnable(GL_CULL_FACE);
 
-    renderableInstance = Building_Generator::GenerateBox(1, 1, 1);
-    renderableInstance->Bind();
-    scene.resize(20);
-    glm::mat4 identity(1.f);
-    for(size_t i=0; i<scene.size(); ++i)
+    const size_t variation = 10;
+    for(size_t i=0; i<variation; ++i)
     {
-        identity = glm::translate(identity, glm::vec3(0.f,0.f,4.f));
-        scene[i].Init(identity, renderableInstance);
+        unsigned int width = 6+rand()%4;
+        unsigned int length = 6+rand()%4;
+        unsigned int height = 6+rand()%20;
+
+        RenderableInstance * renderableInstance = Building_Generator::GenerateBox(width, length, height);
+        renderableInstance->Bind();
+
+        mRenderableInstanceList.push_back(renderableInstance);
     }
+
+    const size_t sceneRootSize = 10;
+    const float spacing = 10.f;
+    scene.resize(sceneRootSize*sceneRootSize);
+    glm::mat4 matTransform(1.f);
+    for(size_t i=0; i<sceneRootSize; ++i)
+    {
+        matTransform = glm::translate(glm::mat4(1.f), glm::vec3(i*spacing,0.f,0.f));
+        const size_t iOffset = i*sceneRootSize;
+        for(size_t j=0; j<sceneRootSize; ++j)
+        {
+            matTransform = glm::translate(matTransform, glm::vec3(0.f,0.f,spacing));
+            scene[iOffset+j].Init(matTransform, mRenderableInstanceList[rand()%variation]);
+        }
+    }
+
+    // Setup Projection and Camera matrix
+    Camera *const camera = Root::Instance().GetCamera();
+    camera->SetPosition(glm::vec3(0,25,0));
+    const float middleScene = 0.5f*sceneRootSize*spacing;
+    camera->SetDirection(glm::normalize(glm::vec3(middleScene,0,middleScene)));
+    camera->SetUp(glm::vec3(0,1,0));
 }
 
 void Renderer::Terminate()
 {
     for(size_t i=0; i<scene.size(); ++i)
         scene[i].Terminate();
+    for(size_t i=0; i<mRenderableInstanceList.size(); ++i)
+        mRenderableInstanceList[i]->Unbind();
     glDeleteProgram(programID);
     glDeleteProgram(programDebugID);
-    renderableInstance->Unbind();
 }
 
 void Renderer::Update()

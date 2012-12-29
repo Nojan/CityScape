@@ -15,7 +15,7 @@ public:
 private:
     GLuint programID;
     GLuint programDebugID;
-    RenderableInstance * renderableInstance;
+    std::vector<RenderableInstance*> mRenderableInstanceList;
     std::vector<Renderable> scene;
 };
 
