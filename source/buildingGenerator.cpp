@@ -156,15 +156,19 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         mesh.uv.push_back(vec2(maxUV.x, minUV.y));
     }
 
-    const unsigned int windowSize = 1;
-
     RenderableInstance * GenerateBox(unsigned int width, unsigned int length, unsigned int height)
     {
         assert( width>0 && length>0 && height>0 );
-
+        const unsigned int windowSize = 1;
+        const unsigned int windowPixelSize = 8;
+        const unsigned int texturePixelSize = 512;
+        const float textureWindowRatio = static_cast<float>(windowPixelSize)/static_cast<float>(texturePixelSize);
         const float widthf  = static_cast<float>(windowSize*width);
         const float lengthf = static_cast<float>(windowSize*length);
         const float heightf = static_cast<float>(windowSize*height);
+        const float widthRatio  = widthf*textureWindowRatio;
+        const float lengthRatio = lengthf*textureWindowRatio;
+        const float heightRatio = heightf*textureWindowRatio;
 
         RenderableInstance * instance = new RenderableInstance();
 
@@ -172,26 +176,35 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         Mesh subMesh;
         mat4 rotation = mat4(1.f);
         const vec3 & vecUp = vec3(0.f, 1.f, 0.f);
+        float periRatio = widthRatio;
+        float lastPeriRatio = 0.f;
 
-        CreateQuad(subMesh, widthf, heightf, vec2(0.f, 0.f), vec2(0.25f, 0.25f));
+        CreateQuad(subMesh, widthf, heightf, vec2(0.f, 0.f), vec2(periRatio, heightRatio));
+        lastPeriRatio = periRatio;
         subMesh.Transform(mat3(rotation), vec3(-widthf*0.5f, 0.f, lengthf*0.5f));
         mesh.AppendMesh(subMesh);
 
         subMesh.Clear();
         rotation = rotate(rotation, 90.f, vecUp); //WTF not rad ?
-        CreateQuad(subMesh, lengthf, heightf, vec2(0.25f, 0.f), vec2(0.5f, 0.25f));
+        periRatio+=lengthRatio;
+        CreateQuad(subMesh, lengthf, heightf, vec2(lastPeriRatio, 0.f), vec2(periRatio, heightRatio));
+        lastPeriRatio = periRatio;
         subMesh.Transform(mat3(rotation), vec3(-lengthf*0.5f, 0.f, widthf*0.5f));
         mesh.AppendMesh(subMesh);
 
         subMesh.Clear();
         rotation = rotate(rotation, 90.f, vecUp); //WTF not rad ?
-        CreateQuad(subMesh, widthf, heightf, vec2(0.5f, 0.f), vec2(0.75f, 0.25f));
+        periRatio+=widthRatio;
+        CreateQuad(subMesh, widthf, heightf, vec2(lastPeriRatio, 0.f), vec2(periRatio, heightRatio));
+        lastPeriRatio = periRatio;
         subMesh.Transform(mat3(rotation), vec3(-widthf*0.5f, 0.f, lengthf*0.5f));
         mesh.AppendMesh(subMesh);
 
         subMesh.Clear();
         rotation = rotate(rotation, 90.f, vecUp); //WTF not rad ?
-        CreateQuad(subMesh, lengthf, heightf, vec2(0.75f, 0.f), vec2(1.f, 0.25f));
+        periRatio+=lengthRatio;
+        CreateQuad(subMesh, lengthf, heightf, vec2(lastPeriRatio, 0.f), vec2(periRatio, heightRatio));
+        lastPeriRatio = periRatio;
         subMesh.Transform(mat3(rotation), vec3(-lengthf*0.5f, 0.f, widthf*0.5f));
         mesh.AppendMesh(subMesh);
 
@@ -200,7 +213,7 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         instance->vertexNormal.insert(instance->vertexNormal.end(), mesh.vertexNormal.begin(), mesh.vertexNormal.end());
         instance->uv.insert(instance->uv.end(), mesh.uv.begin(), mesh.uv.end());
 
-        GenerateBuildingTexture(*(instance->texture));
+        GenerateBuildingTexture(*(instance->texture), texturePixelSize, texturePixelSize, windowPixelSize);
 
         return instance;
     }
