@@ -180,19 +180,19 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         subMesh.Clear();
         rotation = rotate(rotation, 90.f, vecUp); //WTF not rad ?
         CreateQuad(subMesh, lengthf, heightf, vec2(0.25f, 0.f), vec2(0.5f, 0.25f));
-        subMesh.Transform(mat3(rotation), vec3(-widthf*0.5f, 0.f, lengthf*0.5f));
+        subMesh.Transform(mat3(rotation), vec3(-lengthf*0.5f, 0.f, widthf*0.5f));
         mesh.AppendMesh(subMesh);
 
         subMesh.Clear();
         rotation = rotate(rotation, 90.f, vecUp); //WTF not rad ?
-        CreateQuad(subMesh, lengthf, heightf, vec2(0.5f, 0.f), vec2(0.75f, 0.25f));
+        CreateQuad(subMesh, widthf, heightf, vec2(0.5f, 0.f), vec2(0.75f, 0.25f));
         subMesh.Transform(mat3(rotation), vec3(-widthf*0.5f, 0.f, lengthf*0.5f));
         mesh.AppendMesh(subMesh);
 
         subMesh.Clear();
         rotation = rotate(rotation, 90.f, vecUp); //WTF not rad ?
         CreateQuad(subMesh, lengthf, heightf, vec2(0.75f, 0.f), vec2(1.f, 0.25f));
-        subMesh.Transform(mat3(rotation), vec3(-widthf*0.5f, 0.f, lengthf*0.5f));
+        subMesh.Transform(mat3(rotation), vec3(-lengthf*0.5f, 0.f, widthf*0.5f));
         mesh.AppendMesh(subMesh);
 
         instance->index.insert(instance->index.end(), mesh.index.begin(), mesh.index.end());
