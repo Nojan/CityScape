@@ -46,7 +46,6 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         const size_t windowPerRow = width/windowSize;
         const size_t windowPerColumn = height/windowSize;
         Texture2D::rgb currentColor = white;
-        srand(12);
         for(size_t row = 0; row<windowPerColumn; row++)
         {
             const size_t rowOffset = row*windowSize*width;

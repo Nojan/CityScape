@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
+#include <random>
 
 #include "root.hpp"
 
@@ -7,6 +8,7 @@ using namespace std;
 
 int main()
 {
+    srand(42);
     Root::Instance().Init();
 
     cout << "Starting main loop." << endl;
