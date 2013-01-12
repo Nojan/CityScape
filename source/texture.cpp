@@ -24,7 +24,8 @@ void Texture2D::setTexture(rgb * data, unsigned int height, unsigned int width)
 
 Texture2D::~Texture2D()
 {
-    delete[] mData;
+    if(mData)
+        delete[] mData;
 }
 
 char const * const Texture2D::getData() const
