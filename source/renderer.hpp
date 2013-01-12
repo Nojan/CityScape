@@ -3,6 +3,8 @@
 
 #include "renderable.hpp"
 
+class Skybox;
+
 class Renderer {
 public:
     Renderer();
@@ -15,6 +17,8 @@ public:
 private:
     GLuint programID;
     GLuint programDebugID;
+    GLuint mSkyboxShaderID;
+    Skybox * mSkybox;
     std::vector<RenderableInstance*> mRenderableInstanceList;
     std::vector<Renderable> scene;
 };

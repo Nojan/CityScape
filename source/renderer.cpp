@@ -3,8 +3,10 @@
 #include "camera.hpp"
 #include "root.hpp"
 #include "shader.hpp"
+#include "skybox.hpp"
 
 #include "buildingGenerator.hpp"
+#include "skyboxGenerator.hpp"
 
 #include <iostream>
 #include <stdlib.h>
@@ -30,9 +32,6 @@ void Renderer::Init()
 
     // OpenGL Setting
     glClearColor(0.0f, 0.0f, 0.3f, 0.0f);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-    //glEnable(GL_CULL_FACE);
 
     const size_t variation = 10;
     for(size_t i=0; i<variation; ++i)
@@ -62,6 +61,10 @@ void Renderer::Init()
         }
     }
 
+    //Setup skybox
+    mSkybox = Building_Generator::GenerateSkybox();
+    mSkyboxShaderID  = LoadShaders( "../shader/Skybox.vertexshader", "../shader/Skybox.fragmentshader" );
+
     // Setup Projection and Camera matrix
     Camera *const camera = Root::Instance().GetCamera();
     camera->SetPosition(glm::vec3(0,25,0));
@@ -76,6 +79,8 @@ void Renderer::Terminate()
         scene[i].Terminate();
     for(size_t i=0; i<mRenderableInstanceList.size(); ++i)
         mRenderableInstanceList[i]->Unbind();
+    delete mSkybox;
+    glDeleteProgram(mSkyboxShaderID);
     glDeleteProgram(programID);
     glDeleteProgram(programDebugID);
 }
@@ -85,6 +90,13 @@ void Renderer::Update()
     // OpenGL rendering goes here...
     glClearDepth(1.0f);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+    glDisable(GL_DEPTH_TEST);
+    mSkybox->Draw(mSkyboxShaderID);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    //glEnable(GL_CULL_FACE);
 
     // draw debug
     if(false)
