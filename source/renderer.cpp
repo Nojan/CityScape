@@ -26,8 +26,8 @@ Renderer::~Renderer()
 void Renderer::Init()
 {
     // Create and compile our GLSL program from the shaders
-    programID = LoadShaders( "../shader/SimpleVertexShader.vertexshader", "../shader/SimpleFragmentShader.fragmentshader" );
-    programDebugID = LoadShaders( "../shader/DebugVertexShader.vertexshader", "../shader/DebugFragmentShader.fragmentshader" );
+    mProgramID = LoadShaders( "../shader/SimpleVertexShader.vertexshader", "../shader/SimpleFragmentShader.fragmentshader" );
+    mProgramDebugID = LoadShaders( "../shader/DebugVertexShader.vertexshader", "../shader/DebugFragmentShader.fragmentshader" );
     cout << "Shader loaded." << endl;
 
     // OpenGL Setting
@@ -48,7 +48,7 @@ void Renderer::Init()
 
     const size_t sceneRootSize = 10;
     const float spacing = 10.f;
-    scene.resize(sceneRootSize*sceneRootSize);
+    mScene.resize(sceneRootSize*sceneRootSize);
     glm::mat4 matTransform(1.f);
     for(size_t i=0; i<sceneRootSize; ++i)
     {
@@ -57,7 +57,7 @@ void Renderer::Init()
         for(size_t j=0; j<sceneRootSize; ++j)
         {
             matTransform = glm::translate(matTransform, glm::vec3(0.f,0.f,spacing));
-            scene[iOffset+j].Init(matTransform, mRenderableInstanceList[rand()%variation]);
+            mScene[iOffset+j].Init(matTransform, mRenderableInstanceList[rand()%variation]);
         }
     }
 
@@ -75,14 +75,14 @@ void Renderer::Init()
 
 void Renderer::Terminate()
 {
-    for(size_t i=0; i<scene.size(); ++i)
-        scene[i].Terminate();
+    for(size_t i=0; i<mScene.size(); ++i)
+        mScene[i].Terminate();
     for(size_t i=0; i<mRenderableInstanceList.size(); ++i)
         mRenderableInstanceList[i]->Unbind();
     delete mSkybox;
     glDeleteProgram(mSkyboxShaderID);
-    glDeleteProgram(programID);
-    glDeleteProgram(programDebugID);
+    glDeleteProgram(mProgramID);
+    glDeleteProgram(mProgramDebugID);
 }
 
 void Renderer::Update()
@@ -101,11 +101,11 @@ void Renderer::Update()
     // draw debug
     if(false)
     {
-        glUseProgram(programDebugID);
+        glUseProgram(mProgramDebugID);
         glPointSize(1.f);
         glLineWidth(2.f);
-        for(size_t i=0; i<scene.size(); ++i)
-            scene[i].DrawDebug(programDebugID);
+        for(size_t i=0; i<mScene.size(); ++i)
+            mScene[i].DrawDebug(mProgramDebugID);
     }
     //lighting
     {
@@ -119,9 +119,9 @@ void Renderer::Update()
     }
 
     // Rendering
-    glUseProgram(programID);
-    for(size_t i=0; i<scene.size(); ++i)
-        scene[i].Draw(programID);
+    glUseProgram(mProgramID);
+    for(size_t i=0; i<mScene.size(); ++i)
+        mScene[i].Draw(mProgramID);
     glUseProgram(0);
 
     // Swap front and back rendering buffers

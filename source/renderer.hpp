@@ -15,12 +15,12 @@ public:
     void Update();
 
 private:
-    GLuint programID;
-    GLuint programDebugID;
+    GLuint mProgramID;
+    GLuint mProgramDebugID;
     GLuint mSkyboxShaderID;
     Skybox * mSkybox;
     std::vector<RenderableInstance*> mRenderableInstanceList;
-    std::vector<Renderable> scene;
+    std::vector<Renderable> mScene;
 };
 
 #endif
