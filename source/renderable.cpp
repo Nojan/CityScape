@@ -9,38 +9,38 @@
 using namespace std;
 
 RenderableInstance::RenderableInstance()
-: bind(false)
+: mBind(false)
 , texture(new Texture2D())
 {}
 
 RenderableInstance::~RenderableInstance()
 {
-    assert(false == bind);
+    assert(false == mBind);
     delete texture;
 }
 
 void RenderableInstance::Bind()
 {
-    assert(false == bind);
+    assert(false == mBind);
 
-    glGenBuffers(1, &indexbuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
+    glGenBuffers(1, &mIndexbuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexbuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, index.size() * sizeof(unsigned short), index.data() , GL_STATIC_DRAW);
 
-    glGenBuffers(1, &vertexbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    glGenBuffers(1, &mVertexbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexbuffer);
     glBufferData(GL_ARRAY_BUFFER, vertexPosition.size()*sizeof(glm::vec3), vertexPosition.data(), GL_STATIC_DRAW);
 
-    glGenBuffers(1, &vertexNormalbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexNormalbuffer);
+    glGenBuffers(1, &mVertexNormalbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexNormalbuffer);
     glBufferData(GL_ARRAY_BUFFER, vertexNormal.size()*sizeof(glm::vec3), vertexNormal.data(), GL_STATIC_DRAW);
 
-    glGenBuffers(1, &uvbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+    glGenBuffers(1, &mUvbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mUvbuffer);
     glBufferData(GL_ARRAY_BUFFER, uv.size()*sizeof(glm::vec2), uv.data(), GL_STATIC_DRAW);
 
-    glGenTextures(1, &texturebuffer);
-    glBindTexture(GL_TEXTURE_2D, texturebuffer);
+    glGenTextures(1, &mTexturebuffer);
+    glBindTexture(GL_TEXTURE_2D, mTexturebuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->getWidth(), texture->getHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, texture->getData());
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -49,56 +49,56 @@ void RenderableInstance::Bind()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    bind = true;
+    mBind = true;
 }
 
 GLuint RenderableInstance::IndexId() const
 {
-    assert(true == bind);
-    return indexbuffer;
+    assert(true == mBind);
+    return mIndexbuffer;
 }
 
 GLuint RenderableInstance:: VertexId() const
 {
-    assert(true == bind);
-    return vertexbuffer;
+    assert(true == mBind);
+    return mVertexbuffer;
 }
 
 GLuint RenderableInstance::NormalId() const
 {
-    assert(true == bind);
-    return vertexNormalbuffer;
+    assert(true == mBind);
+    return mVertexNormalbuffer;
 }
 
 GLuint RenderableInstance::UvId() const
 {
-    assert(true == bind);
-    return uvbuffer;
+    assert(true == mBind);
+    return mUvbuffer;
 }
 
 GLuint RenderableInstance::TextureId() const
 {
-    assert(true == bind);
-    return texturebuffer;
+    assert(true == mBind);
+    return mTexturebuffer;
 }
 
 void RenderableInstance::Unbind()
 {
-    assert(true == bind);
+    assert(true == mBind);
 
-    glDeleteBuffers(1, &indexbuffer);
-    glDeleteBuffers(1, &vertexbuffer);
-    glDeleteBuffers(1, &vertexNormalbuffer);
-    glDeleteBuffers(1, &uvbuffer);
-    glDeleteBuffers(1, &texturebuffer);
+    glDeleteBuffers(1, &mIndexbuffer);
+    glDeleteBuffers(1, &mVertexbuffer);
+    glDeleteBuffers(1, &mVertexNormalbuffer);
+    glDeleteBuffers(1, &mUvbuffer);
+    glDeleteBuffers(1, &mTexturebuffer);
 
 
-    bind = false;
+    mBind = false;
 }
 
 bool RenderableInstance::IsBind() const
 {
-    return bind;
+    return mBind;
 }
 
 RenderableInstance * RenderableInstance::MakeInstanceFrom(char const * pathToObj, char const * pathToTexture)

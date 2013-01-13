@@ -35,13 +35,13 @@ public:
     Texture2D* texture;
 
 private:
-    GLuint indexbuffer;
-    GLuint vertexbuffer;
-    GLuint vertexNormalbuffer;
-    GLuint uvbuffer;
-    GLuint texturebuffer;
+    GLuint mIndexbuffer;
+    GLuint mVertexbuffer;
+    GLuint mVertexNormalbuffer;
+    GLuint mUvbuffer;
+    GLuint mTexturebuffer;
 
-    bool bind;
+    bool mBind;
 };
 
 class Renderable {
