@@ -35,9 +35,23 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
 
         Color::rgb * textureData = new Color::rgb[textureSize];
 
+        const float saturation = static_cast<float>(rand()%20)/100.f;
+
+        std::vector<float> hueVector =
+        {
+            3.14f, // blue
+            2.20f, // green
+            1.50f, // yellow
+        };
+
+        const float hue = rand()%hueVector.size();
+
+        const Color::hsv halfLit = {hue, saturation, 0.5f};
+        const Color::hsv fullLit = {hue, saturation, 1.f};
+
         const Color::rgb black = {0, 0, 0};
-        const Color::rgb grey  = {(char)128, (char)128, (char)128};
-        const Color::rgb white = {(char)255, (char)255, (char)255};
+        const Color::rgb grey  = Color::hsv2rgb(halfLit);
+        const Color::rgb white = Color::hsv2rgb(fullLit);
         // Tout en noir
         for(size_t i=0; i< textureSize; ++i)
         {
