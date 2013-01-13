@@ -1,4 +1,6 @@
 #include "skyboxGenerator.hpp"
+
+#include "color.hpp"
 #include "skybox.hpp"
 #include "texture.hpp"
 
@@ -13,10 +15,10 @@ void GenerateSkyboxTexture(Texture2D& texture, unsigned int length)
 {
     const size_t textureSize = static_cast<size_t>(length*length);
 
-    Texture2D::rgb * textureData = new Texture2D::rgb[textureSize];
+    Color::rgb * textureData = new Color::rgb[textureSize];
 
-    const Texture2D::rgb black = {0, 0, 0};
-    const Texture2D::rgb white = {(char)255, (char)255, (char)255};
+    const Color::rgb black = {0, 0, 0};
+    const Color::rgb white = {(char)255, (char)255, (char)255};
 
     int r = 0;
     for(size_t i=0; i< textureSize; ++i)

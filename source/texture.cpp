@@ -1,5 +1,7 @@
 #include "texture.hpp"
 
+#include "color.hpp"
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,7 +16,7 @@ Texture2D::Texture2D()
 , mWidth(0)
 {}
 
-void Texture2D::setTexture(rgb * data, unsigned int height, unsigned int width)
+void Texture2D::setTexture(Color::rgb * data, unsigned int height, unsigned int width)
 {
     assert(NULL == mData);
     mData = data;
@@ -81,7 +83,7 @@ void Texture2D::loadBMP_custom(const char * imagepath, Texture2D & texture)
     if (dataPos==0)      dataPos=headerSize; // The BMP header is done that way
 
     // Create a buffer
-    texture.mData = new rgb [imageSize];
+    texture.mData = new Color::rgb[imageSize];
 
     fread(texture.mData, 1, imageSize, file);
 

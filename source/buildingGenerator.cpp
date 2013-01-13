@@ -1,6 +1,7 @@
 #include "buildingGenerator.hpp"
 
 #include "texture.hpp"
+#include "color.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
@@ -13,7 +14,7 @@ using namespace glm;
 namespace Building_Generator
 {
 
-void SetWindowColor(Texture2D::rgb * textureData, Texture2D::rgb color, size_t width, size_t windowSize )
+void SetWindowColor(Color::rgb * textureData, Color::rgb color, size_t width, size_t windowSize )
 {
     for(size_t i=1; i+1<windowSize; ++i )
     {
@@ -32,11 +33,11 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         assert(height>=windowSize);
         const size_t textureSize = static_cast<size_t>(width*height);
 
-        Texture2D::rgb * textureData = new Texture2D::rgb[textureSize];
+        Color::rgb * textureData = new Color::rgb[textureSize];
 
-        const Texture2D::rgb black = {0, 0, 0};
-        const Texture2D::rgb grey  = {(char)128, (char)128, (char)128};
-        const Texture2D::rgb white = {(char)255, (char)255, (char)255};
+        const Color::rgb black = {0, 0, 0};
+        const Color::rgb grey  = {(char)128, (char)128, (char)128};
+        const Color::rgb white = {(char)255, (char)255, (char)255};
         // Tout en noir
         for(size_t i=0; i< textureSize; ++i)
         {
@@ -47,7 +48,7 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         const int litWindowPercent = fullLitWindowPercent + rand()%15;
         const size_t windowPerRow = width/windowSize;
         const size_t windowPerColumn = height/windowSize;
-        Texture2D::rgb currentColor = white;
+        Color::rgb currentColor = white;
         for(size_t row = 0; row<windowPerColumn; row++)
         {
             const size_t rowOffset = row*windowSize*width;
