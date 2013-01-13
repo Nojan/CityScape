@@ -19,13 +19,13 @@ private:
     ~Root();
 
 private:
-    Camera* camera;
-    Renderer* renderer;
-    int running;
+    Camera* mCamera;
+    Renderer* mRenderer;
+    int mRunning;
 
     // Performance counter
-    int framesCounter;
+    int mFramesCounter;
     double mFrameDuration;
-    double framesDuration;
+    double mFramesDuration;
 };
 #endif

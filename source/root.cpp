@@ -42,19 +42,19 @@ Root& Root::Instance()
 }
 
 Root::Root()
-: running(GL_FALSE)
-, framesCounter(0)
+: mRunning(GL_FALSE)
+, mFramesCounter(0)
 , mFrameDuration(0)
-, framesDuration(0)
+, mFramesDuration(0)
 {
-    camera = new Camera();
-    renderer = new Renderer();
+    mCamera = new Camera();
+    mRenderer = new Renderer();
 }
 
 Root::~Root()
 {
-    delete renderer;
-    delete camera;
+    delete mRenderer;
+    delete mCamera;
 }
 
 void Root::Init()
@@ -115,16 +115,16 @@ void Root::Init()
     glfwSetMouseButtonCallback(handleMouseButton);
     glfwSetMouseWheelCallback(handleMouseWheel);
 
-    running = GL_TRUE;
+    mRunning = GL_TRUE;
 
-    camera->Init();
-    renderer->Init();
+    mCamera->Init();
+    mRenderer->Init();
 }
 
 void Root::Terminate()
 {
-    camera->Terminate();
-    renderer->Terminate();
+    mCamera->Terminate();
+    mRenderer->Terminate();
 
     glfwTerminate();
 }
@@ -132,29 +132,29 @@ void Root::Terminate()
 void Root::Update()
 {
     const double frameLimiter = 1/60;
-    running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
+    mRunning = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
 
     glfwSetTime(0);
-    camera->Update(mFrameDuration);
-    renderer->Update();
+    mCamera->Update(mFrameDuration);
+    mRenderer->Update();
     mFrameDuration = glfwGetTime();
 
-    ++framesCounter;
-    framesDuration += mFrameDuration;
+    ++mFramesCounter;
+    mFramesDuration += mFrameDuration;
     glfwSleep( frameLimiter - mFrameDuration);
-    if(framesCounter > 100)
+    if(mFramesCounter > 100)
     {
-        const double avgFrameDuration = framesDuration / static_cast<double>(framesCounter);
+        const double avgFrameDuration = mFramesDuration / static_cast<double>(mFramesCounter);
         std::cout << "Average frame : " << avgFrameDuration << "s" << std::endl;
     }
 }
 
 bool Root::IsRunning()
 {
-    return running;
+    return mRunning;
 }
 
 Camera *const Root::GetCamera()
 {
-    return camera;
+    return mCamera;
 }
