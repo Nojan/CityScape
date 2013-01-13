@@ -43,6 +43,8 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
             textureData[i] = black;
         }
 
+        const int fullLitWindowPercent = rand()%5;
+        const int litWindowPercent = fullLitWindowPercent + rand()%15;
         const size_t windowPerRow = width/windowSize;
         const size_t windowPerColumn = height/windowSize;
         Texture2D::rgb currentColor = white;
@@ -59,11 +61,11 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
                 }
                 else
                 {
-                    r = rand()%10;
-                    if(r<2)
+                    r = rand()%100;
+                    if(r<litWindowPercent)
                     {
                         nb = rand()%6;
-                        if(r==0)
+                        if(r<fullLitWindowPercent)
                             currentColor = white;
                         else
                             currentColor = grey;
