@@ -21,7 +21,7 @@ public:
 
     void Init();
     void Terminate();
-    void Update();
+    void Update(const double frameDuration);
 
     perspective const& Perspective() const;
 

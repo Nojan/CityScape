@@ -43,12 +43,12 @@ void Camera::Terminate()
 
 }
 
-void Camera::Update()
+void Camera::Update(const double frameDuration)
 {
     HandleKeyboardEvent();
     if( MV_NONE != mMoveMask )
     {
-        const float moveSpeed = 0.1f;
+        const float moveSpeed = 0.01f/static_cast<float>(frameDuration);
         if(MV_LEFT & mMoveMask)
             mPosition -= mOrthoDirection*moveSpeed;
         if(MV_RIGHT & mMoveMask)

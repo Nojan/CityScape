@@ -135,7 +135,7 @@ void Root::Update()
     running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
 
     glfwSetTime(0);
-    camera->Update();
+    camera->Update(mFrameDuration);
     renderer->Update();
     mFrameDuration = glfwGetTime();
 
