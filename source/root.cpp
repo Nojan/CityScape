@@ -44,6 +44,7 @@ Root& Root::Instance()
 Root::Root()
 : running(GL_FALSE)
 , framesCounter(0)
+, mFrameDuration(0)
 , framesDuration(0)
 {
     camera = new Camera();
@@ -136,11 +137,11 @@ void Root::Update()
     glfwSetTime(0);
     camera->Update();
     renderer->Update();
-    const double frameDuration = glfwGetTime();
+    mFrameDuration = glfwGetTime();
 
     ++framesCounter;
-    framesDuration += frameDuration;
-    glfwSleep( frameLimiter - frameDuration);
+    framesDuration += mFrameDuration;
+    glfwSleep( frameLimiter - mFrameDuration);
     if(framesCounter > 100)
     {
         const double avgFrameDuration = framesDuration / static_cast<double>(framesCounter);

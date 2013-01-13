@@ -25,6 +25,7 @@ private:
 
     // Performance counter
     int framesCounter;
+    double mFrameDuration;
     double framesDuration;
 };
 #endif
