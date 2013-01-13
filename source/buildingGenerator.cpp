@@ -29,7 +29,7 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
     {
         assert(windowSize>2);
         assert(width>=windowSize);
-        assert(width>=windowSize);
+        assert(height>=windowSize);
         const size_t textureSize = static_cast<size_t>(width*height);
 
         Texture2D::rgb * textureData = new Texture2D::rgb[textureSize];
