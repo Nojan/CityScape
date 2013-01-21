@@ -1,7 +1,7 @@
 #ifndef BUILDING_GENERATOR_HPP
 #define BUILDING_GENERATOR_HPP
 
-#include "renderable.hpp"
+#include "renderableTexture.hpp"
 
 namespace Building_Generator
 {

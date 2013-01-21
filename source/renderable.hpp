@@ -10,41 +10,19 @@
 
 class Texture2D;
 
-class RenderableTextureInstance {
+class RenderableInstance
+{
 public:
-    static RenderableTextureInstance * MakeInstanceFrom(char const * pathToObj, char const * pathToTexture);
+    RenderableInstance();
+    virtual ~RenderableInstance();
 
-    RenderableTextureInstance();
-    ~RenderableTextureInstance();
+    virtual void Draw(const glm::mat4 &model) const = 0;
 
-    void Init(GLuint programID);
-
-    void Draw(const glm::mat4 &model) const;
-
-    void Bind();
-    void Unbind();
+    virtual void Bind();
+    virtual void Unbind();
     bool IsBind() const;
 
-    GLuint IndexId() const;
-    GLuint VertexId() const;
-    GLuint NormalId() const;
-    GLuint UvId() const;
-    GLuint TextureId() const;
-
-    std::vector<unsigned short> index;
-    std::vector<glm::vec3> vertexPosition;
-    std::vector<glm::vec3> vertexNormal;
-    std::vector<glm::vec2> uv;
-    Texture2D* texture;
-
 private:
-    GLuint mIndexbuffer;
-    GLuint mVertexbuffer;
-    GLuint mVertexNormalbuffer;
-    GLuint mUvbuffer;
-    GLuint mTexturebuffer;
-    GLuint mProgramID;
-
     bool mBind;
 };
 
@@ -53,15 +31,14 @@ public:
     Renderable();
     ~Renderable();
 
-    void Init(glm::mat4 const& modelTransformMatrix, RenderableTextureInstance const* instance);
+    void Init(glm::mat4 const& modelTransformMatrix, RenderableInstance const* instance);
     void Terminate();
     void Draw();
-    void DrawDebug(GLuint programID);
 
 private:
     glm::mat4 mModel;
 
-    RenderableTextureInstance const* mInstance;
+    RenderableInstance const* mInstance;
 };
 
 #endif

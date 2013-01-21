@@ -19,7 +19,7 @@ private:
     GLuint mDebugProgramID;
     GLuint mSkyboxProgramID;
     Skybox * mSkybox;
-    std::vector<RenderableTextureInstance*> mRenderableInstanceList;
+    std::vector<RenderableInstance*> mRenderableInstanceList;
     std::vector<Renderable> mScene;
 };
 

@@ -99,15 +99,6 @@ void Renderer::Update()
     glDepthFunc(GL_LESS);
     //glEnable(GL_CULL_FACE);
 
-    // draw debug
-    if(false)
-    {
-        glUseProgram(mDebugProgramID);
-        glPointSize(1.f);
-        glLineWidth(2.f);
-        for(size_t i=0; i<mScene.size(); ++i)
-            mScene[i].DrawDebug(mDebugProgramID);
-    }
     //lighting
     {
         GLfloat DiffuseLight[] = {0.f, 0.f, 0.f};
