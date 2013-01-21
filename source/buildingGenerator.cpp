@@ -40,8 +40,8 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
 
         const float saturation = static_cast<float>(rand()%20)/100.f;
 
-        const size_t windowWidthMargin = 1;
-        const size_t windowHeightMargin = 1;
+        const size_t windowWidthMargin = rand()%2+1;
+        const size_t windowHeightMargin = rand()%2+1;
 
         std::vector<float> hueVector =
         {
