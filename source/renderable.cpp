@@ -10,18 +10,94 @@
 
 using namespace std;
 
-RenderableInstance::RenderableInstance()
+RenderableTextureInstance::RenderableTextureInstance()
 : mBind(false)
 , texture(new Texture2D())
 {}
 
-RenderableInstance::~RenderableInstance()
+RenderableTextureInstance::~RenderableTextureInstance()
 {
     assert(false == mBind);
     delete texture;
 }
 
-void RenderableInstance::Bind()
+void RenderableTextureInstance::Init(GLuint programID)
+{
+    mProgramID = programID;
+}
+
+void RenderableTextureInstance::Draw(const glm::mat4 &model) const
+{
+    assert( IsBind() );
+
+    // Get a handle for our buffers
+    GLuint vertexPosition_modelspaceID = glGetAttribLocation(mProgramID, "vertexPosition_modelspace");
+    GLuint vertexNormal_modelspaceID   = glGetAttribLocation(mProgramID, "vertexNormal_modelspace");
+    GLuint vertexUVID                  = glGetAttribLocation(mProgramID, "vertexUV");
+    GLuint textureID                   = glGetUniformLocation(mProgramID, "textureSampler");
+    GLuint matrixMVP_ID                = glGetUniformLocation(mProgramID, "MVP");
+    GLuint matrixMV_ID                 = glGetUniformLocation(mProgramID, "MV");
+
+    glm::mat4 MVP = Root::Instance().GetCamera()->ProjectionView() * model;
+    glm::mat4 MV = Root::Instance().GetCamera()->View() * model;
+
+    // Send our transformation to the currently bound shader,
+    glUniformMatrix4fv(matrixMVP_ID, 1, GL_FALSE, glm::value_ptr(MVP));
+    glUniformMatrix4fv(matrixMV_ID, 1, GL_FALSE, glm::value_ptr(MV));
+
+    // Bind our texture in Texture Unit 0
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, TextureId());
+    glUniform1i(textureID, 0);
+
+    // 1rst attribute buffer : vertices
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, VertexId());
+    glVertexAttribPointer(
+        vertexPosition_modelspaceID, // The attribute we want to configure
+        3,                           // size
+        GL_FLOAT,                    // type
+        GL_FALSE,                    // normalized?
+        0,                           // stride
+        (void*)0                     // array buffer offset
+    );
+
+    // 2nd attribute buffer : UVs
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, UvId());
+    glVertexAttribPointer(
+        vertexUVID,                   // The attribute we want to configure
+        2,                            // size : U+V => 2
+        GL_FLOAT,                     // type
+        GL_FALSE,                     // normalized?
+        0,                            // stride
+        (void*)0                      // array buffer offset
+    );
+
+    // 3rd attribute buffer : normals
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, NormalId());
+    glVertexAttribPointer(
+        vertexNormal_modelspaceID,    // The attribute we want to configure
+        3,                            // size
+        GL_FLOAT,                     // type
+        GL_TRUE,                      // normalized?
+        0,                            // stride
+        (void*)0                      // array buffer offset
+    );
+
+    // 4rd attribute buffer : index
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexId());
+
+    // Draw the triangleS !
+    glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_SHORT, (void*)0);
+
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+}
+
+void RenderableTextureInstance::Bind()
 {
     assert(false == mBind);
 
@@ -54,37 +130,37 @@ void RenderableInstance::Bind()
     mBind = true;
 }
 
-GLuint RenderableInstance::IndexId() const
+GLuint RenderableTextureInstance::IndexId() const
 {
     assert(true == mBind);
     return mIndexbuffer;
 }
 
-GLuint RenderableInstance:: VertexId() const
+GLuint RenderableTextureInstance:: VertexId() const
 {
     assert(true == mBind);
     return mVertexbuffer;
 }
 
-GLuint RenderableInstance::NormalId() const
+GLuint RenderableTextureInstance::NormalId() const
 {
     assert(true == mBind);
     return mVertexNormalbuffer;
 }
 
-GLuint RenderableInstance::UvId() const
+GLuint RenderableTextureInstance::UvId() const
 {
     assert(true == mBind);
     return mUvbuffer;
 }
 
-GLuint RenderableInstance::TextureId() const
+GLuint RenderableTextureInstance::TextureId() const
 {
     assert(true == mBind);
     return mTexturebuffer;
 }
 
-void RenderableInstance::Unbind()
+void RenderableTextureInstance::Unbind()
 {
     assert(true == mBind);
 
@@ -98,14 +174,14 @@ void RenderableInstance::Unbind()
     mBind = false;
 }
 
-bool RenderableInstance::IsBind() const
+bool RenderableTextureInstance::IsBind() const
 {
     return mBind;
 }
 
-RenderableInstance * RenderableInstance::MakeInstanceFrom(char const * pathToObj, char const * pathToTexture)
+RenderableTextureInstance * RenderableTextureInstance::MakeInstanceFrom(char const * pathToObj, char const * pathToTexture)
 {
-    RenderableInstance * instance = new RenderableInstance();
+    RenderableTextureInstance * instance = new RenderableTextureInstance();
     loadIndexedOBJ(pathToObj, instance->index, instance->vertexPosition, instance->uv, instance->vertexNormal);
     Texture2D::loadBMP_custom(pathToTexture, *(instance->texture));
 
@@ -119,7 +195,7 @@ Renderable::Renderable()
 Renderable::~Renderable()
 {}
 
-void Renderable::Init(glm::mat4 const & modelTransformMatrix, RenderableInstance const* instance)
+void Renderable::Init(glm::mat4 const & modelTransformMatrix, RenderableTextureInstance const* instance)
 {
     assert(instance);
     mModel = modelTransformMatrix;
@@ -131,76 +207,11 @@ void Renderable::Terminate()
     mInstance = 0;
 }
 
-void Renderable::Draw(GLuint programID)
+void Renderable::Draw()
 {
     assert(mInstance);
-    assert(mInstance->IsBind());
 
-    // Get a handle for our buffers
-    GLuint vertexPosition_modelspaceID = glGetAttribLocation(programID, "vertexPosition_modelspace");
-    GLuint vertexNormal_modelspaceID   = glGetAttribLocation(programID, "vertexNormal_modelspace");
-    GLuint vertexUVID                  = glGetAttribLocation(programID, "vertexUV");
-    GLuint textureID                   = glGetUniformLocation(programID, "textureSampler");
-    GLuint matrixMVP_ID                = glGetUniformLocation(programID, "MVP");
-    GLuint matrixMV_ID                 = glGetUniformLocation(programID, "MV");
-
-    glm::mat4 MVP = Root::Instance().GetCamera()->ProjectionView() * mModel;
-    glm::mat4 MV = Root::Instance().GetCamera()->View() * mModel;
-
-    // Send our transformation to the currently bound shader,
-    glUniformMatrix4fv(matrixMVP_ID, 1, GL_FALSE, glm::value_ptr(MVP));
-    glUniformMatrix4fv(matrixMV_ID, 1, GL_FALSE, glm::value_ptr(MV));
-
-    // Bind our texture in Texture Unit 0
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, mInstance->TextureId());
-    glUniform1i(textureID, 0);
-
-    // 1rst attribute buffer : vertices
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, mInstance->VertexId());
-    glVertexAttribPointer(
-        vertexPosition_modelspaceID, // The attribute we want to configure
-        3,                           // size
-        GL_FLOAT,                    // type
-        GL_FALSE,                    // normalized?
-        0,                           // stride
-        (void*)0                     // array buffer offset
-    );
-
-    // 2nd attribute buffer : UVs
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, mInstance->UvId());
-    glVertexAttribPointer(
-        vertexUVID,                   // The attribute we want to configure
-        2,                            // size : U+V => 2
-        GL_FLOAT,                     // type
-        GL_FALSE,                     // normalized?
-        0,                            // stride
-        (void*)0                      // array buffer offset
-    );
-
-    // 3rd attribute buffer : normals
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, mInstance->NormalId());
-    glVertexAttribPointer(
-        vertexNormal_modelspaceID,    // The attribute we want to configure
-        3,                            // size
-        GL_FLOAT,                     // type
-        GL_TRUE,                      // normalized?
-        0,                            // stride
-        (void*)0                      // array buffer offset
-    );
-
-    // 4rd attribute buffer : index
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mInstance->IndexId());
-
-    // Draw the triangleS !
-    glDrawElements(GL_TRIANGLES, mInstance->index.size(), GL_UNSIGNED_SHORT, (void*)0);
-
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(2);
+    mInstance->Draw(mModel);
 }
 
 void Renderable::DrawDebug(GLuint programID)

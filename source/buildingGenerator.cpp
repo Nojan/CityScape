@@ -179,7 +179,7 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         mesh.uv.push_back(vec2(maxUV.x, minUV.y));
     }
 
-    RenderableInstance * GenerateBox(unsigned int width, unsigned int length, unsigned int height)
+    RenderableTextureInstance * GenerateBox(unsigned int width, unsigned int length, unsigned int height)
     {
         assert( width>0 && length>0 && height>0 );
         const unsigned int windowSize = 1;
@@ -193,7 +193,7 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         const float lengthRatio = lengthf*textureWindowRatio;
         const float heightRatio = heightf*textureWindowRatio;
 
-        RenderableInstance * instance = new RenderableInstance();
+        RenderableTextureInstance * instance = new RenderableTextureInstance();
 
         Mesh mesh;
         Mesh subMesh;

@@ -10,12 +10,16 @@
 
 class Texture2D;
 
-class RenderableInstance {
+class RenderableTextureInstance {
 public:
-    static RenderableInstance * MakeInstanceFrom(char const * pathToObj, char const * pathToTexture);
+    static RenderableTextureInstance * MakeInstanceFrom(char const * pathToObj, char const * pathToTexture);
 
-    RenderableInstance();
-    ~RenderableInstance();
+    RenderableTextureInstance();
+    ~RenderableTextureInstance();
+
+    void Init(GLuint programID);
+
+    void Draw(const glm::mat4 &model) const;
 
     void Bind();
     void Unbind();
@@ -26,7 +30,6 @@ public:
     GLuint NormalId() const;
     GLuint UvId() const;
     GLuint TextureId() const;
-
 
     std::vector<unsigned short> index;
     std::vector<glm::vec3> vertexPosition;
@@ -40,6 +43,7 @@ private:
     GLuint mVertexNormalbuffer;
     GLuint mUvbuffer;
     GLuint mTexturebuffer;
+    GLuint mProgramID;
 
     bool mBind;
 };
@@ -49,15 +53,15 @@ public:
     Renderable();
     ~Renderable();
 
-    void Init(glm::mat4 const& modelTransformMatrix, RenderableInstance const* instance);
+    void Init(glm::mat4 const& modelTransformMatrix, RenderableTextureInstance const* instance);
     void Terminate();
-    void Draw(GLuint programID);
+    void Draw();
     void DrawDebug(GLuint programID);
 
 private:
     glm::mat4 mModel;
 
-    RenderableInstance const* mInstance;
+    RenderableTextureInstance const* mInstance;
 };
 
 #endif

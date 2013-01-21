@@ -40,7 +40,8 @@ void Renderer::Init()
         unsigned int length = 6+rand()%4;
         unsigned int height = 6+rand()%20;
 
-        RenderableInstance * renderableInstance = Building_Generator::GenerateBox(width, length, height);
+        RenderableTextureInstance * renderableInstance = Building_Generator::GenerateBox(width, length, height);
+        renderableInstance->Init(mTextureProgramID);
         renderableInstance->Bind();
 
         mRenderableInstanceList.push_back(renderableInstance);
@@ -121,7 +122,7 @@ void Renderer::Update()
     // Rendering
     glUseProgram(mTextureProgramID);
     for(size_t i=0; i<mScene.size(); ++i)
-        mScene[i].Draw(mTextureProgramID);
+        mScene[i].Draw();
     glUseProgram(0);
 
     // Swap front and back rendering buffers
