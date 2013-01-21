@@ -14,12 +14,15 @@ using namespace glm;
 namespace Building_Generator
 {
 
-void SetWindowColor(Color::rgb * textureData, Color::rgb color, size_t width, size_t windowSize )
+void SetWindowColor(Color::rgb * textureData, const Color::rgb color, const size_t buildingWidth, const size_t windowSize, const size_t witdhMargin, const size_t heightMargin )
 {
-    for(size_t i=1; i+1<windowSize; ++i )
+    assert(witdhMargin < (windowSize/2));
+    assert(heightMargin < (windowSize/2));
+
+    for(size_t i=heightMargin; i+heightMargin<windowSize; ++i )
     {
-        const size_t iOfsset = i*width;
-        for(size_t j=1; j+1<windowSize; ++j)
+        const size_t iOfsset = i*buildingWidth;
+        for(size_t j=witdhMargin; j+witdhMargin<windowSize; ++j)
         {
             textureData[iOfsset + j] = color;
         }
@@ -36,6 +39,9 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         Color::rgb * textureData = new Color::rgb[textureSize];
 
         const float saturation = static_cast<float>(rand()%20)/100.f;
+
+        const size_t windowWidthMargin = 1;
+        const size_t windowHeightMargin = 1;
 
         std::vector<float> hueVector =
         {
@@ -89,7 +95,7 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
                         currentColor = black;
                 }
 
-                SetWindowColor(textureData + (rowOffset + column*windowSize), currentColor, width, windowSize );
+                SetWindowColor(textureData + (rowOffset + column*windowSize), currentColor, width, windowSize, windowWidthMargin, windowHeightMargin );
             }
         }
         texture.setTexture(textureData, width, height);
