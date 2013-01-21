@@ -11,13 +11,12 @@ varying vec3 vertexNormal_eyespace;
 
 // Values that stay constant for the whole mesh.
 uniform mat4 MVP;
-uniform mat4 V;
-uniform mat4 M;
+uniform mat4 MV;
 
 void main(){
     gl_Position =  MVP * vec4(vertexPosition_modelspace, 1);
 
-    vertexNormal_eyespace = normalize( vec3( V * M * vec4(vertexNormal_modelspace, 0)) );
+    vertexNormal_eyespace = normalize( vec3( MV * vec4(vertexNormal_modelspace, 0)) );
     UV = vertexUV;
 }
 

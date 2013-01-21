@@ -6,14 +6,13 @@ varying vec3 vertexNormal_eyespace;
 
 // Values that stay constant for the whole mesh.
 uniform sampler2D textureSampler;
-uniform mat4 V;
-uniform mat4 M;
+uniform mat4 MV;
 
 void main(){
     vec4 texelColour = texture2D( textureSampler, UV );
     vec4 ambient = gl_LightSource[0].ambient;
     vec4 diffuse = ( 1.0 - ambient ) * gl_LightSource[0].diffuse;
-    vec3 lightDirection = normalize( vec3( V * M * gl_LightSource[0].position ) );
+    vec3 lightDirection = normalize( vec3( MV * gl_LightSource[0].position ) );
     float cosNormaLight = max(0, dot(vertexNormal_eyespace, lightDirection ));
 
     gl_FragColor = texelColour*(ambient + diffuse*cosNormaLight);

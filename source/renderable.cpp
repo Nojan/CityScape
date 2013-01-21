@@ -6,6 +6,8 @@
 #include "objloader.hpp"
 #include "texture.hpp"
 
+#include "glm/gtc/type_ptr.hpp"
+
 using namespace std;
 
 RenderableInstance::RenderableInstance()
@@ -140,17 +142,14 @@ void Renderable::Draw(GLuint programID)
     GLuint vertexUVID                  = glGetAttribLocation(programID, "vertexUV");
     GLuint textureID                   = glGetUniformLocation(programID, "textureSampler");
     GLuint matrixMVP_ID                = glGetUniformLocation(programID, "MVP");
-    GLuint matrixM_ID                  = glGetUniformLocation(programID, "M");
-    GLuint matrixV_ID                  = glGetUniformLocation(programID, "V");
+    GLuint matrixMV_ID                 = glGetUniformLocation(programID, "MV");
 
     glm::mat4 MVP = Root::Instance().GetCamera()->ProjectionView() * mModel;
-    glm::mat4 M = mModel;
-    glm::mat4 V = Root::Instance().GetCamera()->View();
+    glm::mat4 MV = Root::Instance().GetCamera()->View() * mModel;
 
     // Send our transformation to the currently bound shader,
-    glUniformMatrix4fv(matrixMVP_ID, 1, GL_FALSE, &MVP[0][0]);
-    glUniformMatrix4fv(matrixM_ID, 1, GL_FALSE, &M[0][0]);
-    glUniformMatrix4fv(matrixV_ID, 1, GL_FALSE, &V[0][0]);
+    glUniformMatrix4fv(matrixMVP_ID, 1, GL_FALSE, glm::value_ptr(MVP));
+    glUniformMatrix4fv(matrixMV_ID, 1, GL_FALSE, glm::value_ptr(MV));
 
     // Bind our texture in Texture Unit 0
     glActiveTexture(GL_TEXTURE0);
