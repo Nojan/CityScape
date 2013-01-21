@@ -15,9 +15,9 @@ public:
     void Update();
 
 private:
-    GLuint mProgramID;
-    GLuint mProgramDebugID;
-    GLuint mSkyboxShaderID;
+    GLuint mTextureProgramID;
+    GLuint mDebugProgramID;
+    GLuint mSkyboxProgramID;
     Skybox * mSkybox;
     std::vector<RenderableInstance*> mRenderableInstanceList;
     std::vector<Renderable> mScene;

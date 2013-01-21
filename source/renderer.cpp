@@ -26,8 +26,8 @@ Renderer::~Renderer()
 void Renderer::Init()
 {
     // Create and compile our GLSL program from the shaders
-    mProgramID = LoadShaders( "../shader/SimpleVertexShader.vertexshader", "../shader/SimpleFragmentShader.fragmentshader" );
-    mProgramDebugID = LoadShaders( "../shader/DebugVertexShader.vertexshader", "../shader/DebugFragmentShader.fragmentshader" );
+    mTextureProgramID = LoadShaders( "../shader/SimpleVertexShader.vertexshader", "../shader/SimpleFragmentShader.fragmentshader" );
+    mDebugProgramID = LoadShaders( "../shader/DebugVertexShader.vertexshader", "../shader/DebugFragmentShader.fragmentshader" );
     cout << "Shader loaded." << endl;
 
     // OpenGL Setting
@@ -63,7 +63,7 @@ void Renderer::Init()
 
     //Setup skybox
     mSkybox = Building_Generator::GenerateSkybox();
-    mSkyboxShaderID  = LoadShaders( "../shader/Skybox.vertexshader", "../shader/Skybox.fragmentshader" );
+    mSkyboxProgramID  = LoadShaders( "../shader/Skybox.vertexshader", "../shader/Skybox.fragmentshader" );
 
     // Setup Projection and Camera matrix
     Camera *const camera = Root::Instance().GetCamera();
@@ -80,9 +80,9 @@ void Renderer::Terminate()
     for(size_t i=0; i<mRenderableInstanceList.size(); ++i)
         mRenderableInstanceList[i]->Unbind();
     delete mSkybox;
-    glDeleteProgram(mSkyboxShaderID);
-    glDeleteProgram(mProgramID);
-    glDeleteProgram(mProgramDebugID);
+    glDeleteProgram(mSkyboxProgramID);
+    glDeleteProgram(mTextureProgramID);
+    glDeleteProgram(mDebugProgramID);
 }
 
 void Renderer::Update()
@@ -92,7 +92,7 @@ void Renderer::Update()
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     glDisable(GL_DEPTH_TEST);
-    mSkybox->Draw(mSkyboxShaderID);
+    mSkybox->Draw(mSkyboxProgramID);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -101,11 +101,11 @@ void Renderer::Update()
     // draw debug
     if(false)
     {
-        glUseProgram(mProgramDebugID);
+        glUseProgram(mDebugProgramID);
         glPointSize(1.f);
         glLineWidth(2.f);
         for(size_t i=0; i<mScene.size(); ++i)
-            mScene[i].DrawDebug(mProgramDebugID);
+            mScene[i].DrawDebug(mDebugProgramID);
     }
     //lighting
     {
@@ -119,9 +119,9 @@ void Renderer::Update()
     }
 
     // Rendering
-    glUseProgram(mProgramID);
+    glUseProgram(mTextureProgramID);
     for(size_t i=0; i<mScene.size(); ++i)
-        mScene[i].Draw(mProgramID);
+        mScene[i].Draw(mTextureProgramID);
     glUseProgram(0);
 
     // Swap front and back rendering buffers
