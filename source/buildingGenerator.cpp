@@ -179,6 +179,31 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         mesh.uv.push_back(vec2(maxUV.x, minUV.y));
     }
 
+    RenderableMaterialInstance * GenerateFloor(unsigned int width, unsigned int length)
+    {
+        assert( width>0 && length>0 );
+        const float gain = 10.f;
+        const float widthf  = static_cast<float>(gain*width);
+        const float lengthf = static_cast<float>(gain*length);
+
+        RenderableMaterialInstance * instance = new RenderableMaterialInstance();
+
+        Mesh mesh;
+        Mesh subMesh;
+        mat4 rotation = mat4(1.f);
+
+        rotation = rotate(rotation, 90.f, vec3(1.f, 0.f, 0.f)); //WTF not rad ?
+        CreateQuad(subMesh, widthf, lengthf, vec2(0.f, 0.f), vec2(0.f, 0.f));
+        subMesh.Transform(mat3(rotation), vec3(0.f, 0.f, 0.f));
+        mesh.AppendMesh(subMesh);
+
+        instance->index.insert(instance->index.end(), mesh.index.begin(), mesh.index.end());
+        instance->vertexPosition.insert(instance->vertexPosition.end(), mesh.vertexPosition.begin(), mesh.vertexPosition.end());
+        instance->vertexNormal.insert(instance->vertexNormal.end(), mesh.vertexNormal.begin(), mesh.vertexNormal.end());
+
+        return instance;
+    }
+
     RenderableTextureInstance * GenerateBox(unsigned int width, unsigned int length, unsigned int height)
     {
         assert( width>0 && length>0 && height>0 );

@@ -26,6 +26,8 @@ void RenderableTextureInstance::Init(GLuint programID)
 
 void RenderableTextureInstance::Draw(const glm::mat4 &model) const
 {
+    assert( 0 != mProgramID );
+    glUseProgram(mProgramID);
     assert( IsBind() );
 
     // Get a handle for our buffers

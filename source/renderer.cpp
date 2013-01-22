@@ -27,7 +27,7 @@ void Renderer::Init()
 {
     // Create and compile our GLSL program from the shaders
     mTextureProgramID = LoadShaders( "../shader/SimpleVertexShader.vertexshader", "../shader/SimpleFragmentShader.fragmentshader" );
-    mDebugProgramID = LoadShaders( "../shader/DebugVertexShader.vertexshader", "../shader/DebugFragmentShader.fragmentshader" );
+    mMaterialProgramID = LoadShaders( "../shader/MaterialVertex.shader", "../shader/MaterialFragment.shader" );
     cout << "Shader loaded." << endl;
 
     // OpenGL Setting
@@ -44,12 +44,12 @@ void Renderer::Init()
         renderableInstance->Init(mTextureProgramID);
         renderableInstance->Bind();
 
-        mRenderableInstanceList.push_back(renderableInstance);
+        mBuildingInstanceList.push_back(renderableInstance);
     }
 
     const size_t sceneRootSize = 10;
     const float spacing = 10.f;
-    mScene.resize(sceneRootSize*sceneRootSize);
+    mScene.resize(sceneRootSize*sceneRootSize + 1);
     glm::mat4 matTransform(1.f);
     for(size_t i=0; i<sceneRootSize; ++i)
     {
@@ -58,9 +58,15 @@ void Renderer::Init()
         for(size_t j=0; j<sceneRootSize; ++j)
         {
             matTransform = glm::translate(matTransform, glm::vec3(0.f,0.f,spacing));
-            mScene[iOffset+j].Init(matTransform, mRenderableInstanceList[rand()%variation]);
+            mScene[iOffset+j].Init(matTransform, mBuildingInstanceList[rand()%variation]);
         }
     }
+
+    //floor
+    mFloorInstance = Building_Generator::GenerateFloor(10, 10);
+    mFloorInstance->Init(mMaterialProgramID);
+    mFloorInstance->Bind();
+    mScene.back().Init(glm::mat4(1), mFloorInstance);
 
     //Setup skybox
     mSkybox = Building_Generator::GenerateSkybox();
@@ -78,12 +84,12 @@ void Renderer::Terminate()
 {
     for(size_t i=0; i<mScene.size(); ++i)
         mScene[i].Terminate();
-    for(size_t i=0; i<mRenderableInstanceList.size(); ++i)
-        mRenderableInstanceList[i]->Unbind();
+    for(size_t i=0; i<mBuildingInstanceList.size(); ++i)
+        mBuildingInstanceList[i]->Unbind();
     delete mSkybox;
     glDeleteProgram(mSkyboxProgramID);
     glDeleteProgram(mTextureProgramID);
-    glDeleteProgram(mDebugProgramID);
+    glDeleteProgram(mMaterialProgramID);
 }
 
 void Renderer::Update()
@@ -111,10 +117,10 @@ void Renderer::Update()
     }
 
     // Rendering
-    glUseProgram(mTextureProgramID);
+    //glUseProgram(mTextureProgramID);
     for(size_t i=0; i<mScene.size(); ++i)
         mScene[i].Draw();
-    glUseProgram(0);
+    //glUseProgram(0);
 
     // Swap front and back rendering buffers
     glfwSwapBuffers();

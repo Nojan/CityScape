@@ -4,6 +4,7 @@
 #include "renderable.hpp"
 
 class Skybox;
+class RenderableMaterialInstance;
 
 class Renderer {
 public:
@@ -16,10 +17,11 @@ public:
 
 private:
     GLuint mTextureProgramID;
-    GLuint mDebugProgramID;
+    GLuint mMaterialProgramID;
     GLuint mSkyboxProgramID;
     Skybox * mSkybox;
-    std::vector<RenderableInstance*> mRenderableInstanceList;
+    RenderableMaterialInstance * mFloorInstance;
+    std::vector<RenderableInstance*> mBuildingInstanceList;
     std::vector<Renderable> mScene;
 };
 
