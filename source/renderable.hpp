@@ -16,6 +16,9 @@ public:
     RenderableInstance();
     virtual ~RenderableInstance();
 
+    void Init(GLuint programID);
+    GLuint ProgramID() const;
+
     virtual void Draw(const glm::mat4 &model) const = 0;
 
     virtual void Bind();
@@ -24,6 +27,7 @@ public:
 
 private:
     bool mBind;
+    GLuint mProgramID;
 };
 
 class Renderable {

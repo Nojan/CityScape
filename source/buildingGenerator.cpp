@@ -179,10 +179,10 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         mesh.uv.push_back(vec2(maxUV.x, minUV.y));
     }
 
-    RenderableMaterialInstance * GenerateFloor(unsigned int width, unsigned int length)
+    RenderableMaterialInstance * GenerateFloor(const float width, const float length)
     {
         assert( width>0 && length>0 );
-        const float gain = 10.f;
+        const float gain = 1.f;
         const float widthf  = static_cast<float>(gain*width);
         const float lengthf = static_cast<float>(gain*length);
 
@@ -204,7 +204,7 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         return instance;
     }
 
-    RenderableTextureInstance * GenerateBox(unsigned int width, unsigned int length, unsigned int height)
+    RenderableTextureInstance * GenerateBox(const float width, const float length, const float height)
     {
         assert( width>0 && length>0 && height>0 );
         const unsigned int windowSize = 1;

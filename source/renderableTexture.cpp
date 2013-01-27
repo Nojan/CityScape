@@ -19,24 +19,19 @@ RenderableTextureInstance::~RenderableTextureInstance()
     delete texture;
 }
 
-void RenderableTextureInstance::Init(GLuint programID)
-{
-    mProgramID = programID;
-}
-
 void RenderableTextureInstance::Draw(const glm::mat4 &model) const
 {
-    assert( 0 != mProgramID );
-    glUseProgram(mProgramID);
+    assert( 0 != ProgramID() );
+    glUseProgram( ProgramID() );
     assert( IsBind() );
 
     // Get a handle for our buffers
-    GLuint vertexPosition_modelspaceID = glGetAttribLocation(mProgramID, "vertexPosition_modelspace");
-    GLuint vertexNormal_modelspaceID   = glGetAttribLocation(mProgramID, "vertexNormal_modelspace");
-    GLuint vertexUVID                  = glGetAttribLocation(mProgramID, "vertexUV");
-    GLuint textureID                   = glGetUniformLocation(mProgramID, "textureSampler");
-    GLuint matrixMVP_ID                = glGetUniformLocation(mProgramID, "MVP");
-    GLuint matrixMV_ID                 = glGetUniformLocation(mProgramID, "MV");
+    GLuint vertexPosition_modelspaceID = glGetAttribLocation(ProgramID(), "vertexPosition_modelspace");
+    GLuint vertexNormal_modelspaceID   = glGetAttribLocation(ProgramID(), "vertexNormal_modelspace");
+    GLuint vertexUVID                  = glGetAttribLocation(ProgramID(), "vertexUV");
+    GLuint textureID                   = glGetUniformLocation(ProgramID(), "textureSampler");
+    GLuint matrixMVP_ID                = glGetUniformLocation(ProgramID(), "MVP");
+    GLuint matrixMV_ID                 = glGetUniformLocation(ProgramID(), "MV");
 
     glm::mat4 MVP = Root::Instance().GetCamera()->ProjectionView() * model;
     glm::mat4 MV = Root::Instance().GetCamera()->View() * model;

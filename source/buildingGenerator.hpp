@@ -6,8 +6,8 @@
 
 namespace Building_Generator
 {
-	RenderableTextureInstance * GenerateBox(unsigned int width, unsigned int length, unsigned int height);
-    RenderableMaterialInstance * GenerateFloor(unsigned int width, unsigned int length);
+    RenderableTextureInstance * GenerateBox(const float width, const float length, const float height);
+    RenderableMaterialInstance * GenerateFloor(const float width, const float length);
 }
 
 #endif //BUILDING_GENERATOR

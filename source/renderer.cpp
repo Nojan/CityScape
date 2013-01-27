@@ -7,6 +7,7 @@
 
 #include "buildingGenerator.hpp"
 #include "skyboxGenerator.hpp"
+#include "streetGenerator.hpp"
 
 #include <iostream>
 #include <stdlib.h>
@@ -33,40 +34,24 @@ void Renderer::Init()
     // OpenGL Setting
     glClearColor(0.0f, 0.0f, 0.3f, 0.0f);
 
-    const size_t variation = 10;
-    for(size_t i=0; i<variation; ++i)
+    const unsigned int sceneRootSize = 20;
+
+    Street_Generator::GenerateStreetScene(sceneRootSize, sceneRootSize, mBuildingInstanceList, mFloorInstanceList, mScene);
+    assert( mScene.size() == sceneRootSize*sceneRootSize );
+
+    for(size_t i=0; i<mBuildingInstanceList.size(); ++i)
     {
-        unsigned int width = 6+rand()%4;
-        unsigned int length = 6+rand()%4;
-        unsigned int height = 6+rand()%20;
-
-        RenderableTextureInstance * renderableInstance = Building_Generator::GenerateBox(width, length, height);
-        renderableInstance->Init(mTextureProgramID);
-        renderableInstance->Bind();
-
-        mBuildingInstanceList.push_back(renderableInstance);
+        RenderableInstance * instance = mBuildingInstanceList[i];
+        instance->Init(mTextureProgramID);
+        instance->Bind();
     }
 
-    const size_t sceneRootSize = 10;
-    const float spacing = 10.f;
-    mScene.resize(sceneRootSize*sceneRootSize + 1);
-    glm::mat4 matTransform(1.f);
-    for(size_t i=0; i<sceneRootSize; ++i)
+    for(size_t i=0; i<mFloorInstanceList.size(); ++i)
     {
-        matTransform = glm::translate(glm::mat4(1.f), glm::vec3(i*spacing,0.f,0.f));
-        const size_t iOffset = i*sceneRootSize;
-        for(size_t j=0; j<sceneRootSize; ++j)
-        {
-            matTransform = glm::translate(matTransform, glm::vec3(0.f,0.f,spacing));
-            mScene[iOffset+j].Init(matTransform, mBuildingInstanceList[rand()%variation]);
-        }
+        RenderableInstance * instance = mFloorInstanceList[i];
+        instance->Init(mMaterialProgramID);
+        instance->Bind();
     }
-
-    //floor
-    mFloorInstance = Building_Generator::GenerateFloor(10, 10);
-    mFloorInstance->Init(mMaterialProgramID);
-    mFloorInstance->Bind();
-    mScene.back().Init(glm::mat4(1), mFloorInstance);
 
     //Setup skybox
     mSkybox = Building_Generator::GenerateSkybox();
@@ -75,7 +60,7 @@ void Renderer::Init()
     // Setup Projection and Camera matrix
     Camera *const camera = Root::Instance().GetCamera();
     camera->SetPosition(glm::vec3(0,25,0));
-    const float middleScene = 0.5f*sceneRootSize*spacing;
+    const float middleScene = 0.5f*sceneRootSize*1.f;
     camera->SetDirection(glm::normalize(glm::vec3(middleScene,0,middleScene)));
     camera->SetUp(glm::vec3(0,1,0));
 }

@@ -19,7 +19,6 @@
 using namespace std;
 
 RenderableMaterialInstance::RenderableMaterialInstance()
-: mProgramID(0)
 {
 }
 
@@ -27,15 +26,10 @@ RenderableMaterialInstance::~RenderableMaterialInstance()
 {
 }
 
-void RenderableMaterialInstance::Init(GLuint programID)
-{
-    mProgramID = programID;
-}
-
 void RenderableMaterialInstance::Draw(const glm::mat4 &model) const
 {
-    assert( 0 != mProgramID );
-    glUseProgram(mProgramID);
+    assert( 0 != ProgramID() );
+    glUseProgram( ProgramID() );
     assert( IsBind() );
     CHECK_OPENGL_ERROR
 
@@ -43,15 +37,15 @@ void RenderableMaterialInstance::Draw(const glm::mat4 &model) const
     glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
 
     // Get a handle for our buffers
-    GLuint vertexPosition_modelspaceID = glGetAttribLocation(mProgramID, "vertexPosition_modelspace"); CHECK_OPENGL_ERROR
-    GLuint vertexNormal_modelspaceID   = glGetAttribLocation(mProgramID, "vertexNormal_modelspace"); CHECK_OPENGL_ERROR
-    GLuint material_ambientFactor_ID   = glGetUniformLocation(mProgramID, "material.ambientFactor"); CHECK_OPENGL_ERROR
-    GLuint material_diffuseFactor_ID   = glGetUniformLocation(mProgramID, "material.diffuseFactor"); CHECK_OPENGL_ERROR
-    GLuint material_specularFactor_ID  = glGetUniformLocation(mProgramID, "material.specularFactor"); CHECK_OPENGL_ERROR
-    GLuint material_emissiveValue_ID   = glGetUniformLocation(mProgramID, "material.emissiveValue"); CHECK_OPENGL_ERROR
-    GLuint material_shininess_ID       = glGetUniformLocation(mProgramID, "material.shininess"); CHECK_OPENGL_ERROR
-    GLuint matrixMVP_ID                = glGetUniformLocation(mProgramID, "MVP"); CHECK_OPENGL_ERROR
-    GLuint matrixMV_ID                 = glGetUniformLocation(mProgramID, "MV"); CHECK_OPENGL_ERROR
+    GLuint vertexPosition_modelspaceID = glGetAttribLocation(ProgramID(), "vertexPosition_modelspace"); CHECK_OPENGL_ERROR
+    GLuint vertexNormal_modelspaceID   = glGetAttribLocation(ProgramID(), "vertexNormal_modelspace"); CHECK_OPENGL_ERROR
+    GLuint material_ambientFactor_ID   = glGetUniformLocation(ProgramID(), "material.ambientFactor"); CHECK_OPENGL_ERROR
+    GLuint material_diffuseFactor_ID   = glGetUniformLocation(ProgramID(), "material.diffuseFactor"); CHECK_OPENGL_ERROR
+    GLuint material_specularFactor_ID  = glGetUniformLocation(ProgramID(), "material.specularFactor"); CHECK_OPENGL_ERROR
+    GLuint material_emissiveValue_ID   = glGetUniformLocation(ProgramID(), "material.emissiveValue"); CHECK_OPENGL_ERROR
+    GLuint material_shininess_ID       = glGetUniformLocation(ProgramID(), "material.shininess"); CHECK_OPENGL_ERROR
+    GLuint matrixMVP_ID                = glGetUniformLocation(ProgramID(), "MVP"); CHECK_OPENGL_ERROR
+    GLuint matrixMV_ID                 = glGetUniformLocation(ProgramID(), "MV"); CHECK_OPENGL_ERROR
 
     glm::mat4 MVP = Root::Instance().GetCamera()->ProjectionView() * model;
     glm::mat4 MV = Root::Instance().GetCamera()->View() * model;
@@ -60,7 +54,7 @@ void RenderableMaterialInstance::Draw(const glm::mat4 &model) const
     mat.ambientFactor = glm::vec4(0.f);
     mat.diffuseFactor = glm::vec4(0.f);
     mat.specularFactor = glm::vec4(0.f);
-    mat.emissiveValue = glm::vec4(0.f, 0.f, 1.f, 1.f);
+    mat.emissiveValue = glm::vec4(0.05f, 0.05f, 0.05f, 1.f);
     mat.shininess = 0.f;
 
     // Send our transformation to the currently bound shader,

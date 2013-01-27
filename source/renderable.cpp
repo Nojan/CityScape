@@ -12,11 +12,22 @@ using namespace std;
 
 RenderableInstance::RenderableInstance()
 : mBind(false)
+, mProgramID(0)
 {}
 
 RenderableInstance::~RenderableInstance()
 {
     assert(false == mBind);
+}
+
+void RenderableInstance::Init(GLuint programID)
+{
+    mProgramID = programID;
+}
+
+GLuint RenderableInstance::ProgramID() const
+{
+    return mProgramID;
 }
 
 void RenderableInstance::Bind()

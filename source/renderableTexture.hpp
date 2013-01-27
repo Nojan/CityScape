@@ -13,8 +13,6 @@ public:
     RenderableTextureInstance();
     ~RenderableTextureInstance();
 
-    void Init(GLuint programID);
-
     virtual void Draw(const glm::mat4 &model) const;
 
     virtual void Bind();
@@ -38,7 +36,6 @@ private:
     GLuint mVertexNormalbuffer;
     GLuint mUvbuffer;
     GLuint mTexturebuffer;
-    GLuint mProgramID;
 };
 
 #endif

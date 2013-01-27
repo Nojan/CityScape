@@ -16,8 +16,6 @@ public:
     RenderableMaterialInstance();
     ~RenderableMaterialInstance();
 
-    void Init(GLuint programID);
-
     virtual void Draw(const glm::mat4 &model) const;
 
     virtual void Bind();
@@ -35,7 +33,6 @@ private:
     GLuint mIndexbuffer;
     GLuint mVertexbuffer;
     GLuint mVertexNormalbuffer;
-    GLuint mProgramID;
 };
 
 #endif
