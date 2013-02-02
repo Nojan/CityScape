@@ -47,4 +47,20 @@ private:
     RenderableInstance const* mInstance;
 };
 
+struct RenderableInstanceSorter
+{
+   bool operator() (const RenderableInstance & lhs, const RenderableInstance & rhs) const
+   {
+      return lhs.ProgramID() <= rhs.ProgramID();
+   }
+};
+
+struct RenderableSorter
+{
+   bool operator() (const Renderable & lhs, const Renderable & rhs) const
+   {
+      return lhs.Instance()->ProgramID() <= rhs.Instance()->ProgramID();
+   }
+};
+
 #endif
