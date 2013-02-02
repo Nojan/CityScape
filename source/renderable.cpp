@@ -74,3 +74,8 @@ void Renderable::Draw()
 
     mInstance->Draw(mModel);
 }
+
+const RenderableInstance * Renderable::Instance() const
+{
+    return mInstance;
+}

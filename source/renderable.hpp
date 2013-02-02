@@ -39,6 +39,8 @@ public:
     void Terminate();
     void Draw();
 
+    const RenderableInstance * Instance() const;
+
 private:
     glm::mat4 mModel;
 
