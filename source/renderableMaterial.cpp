@@ -1,20 +1,13 @@
 #include "renderableMaterial.hpp"
 
 #include "camera.hpp"
+#include "renderer.hpp"
 #include "root.hpp"
 
 #include "objloader.hpp"
 #include "texture.hpp"
 
 #include "glm/gtc/type_ptr.hpp"
-
-#define CHECK_OPENGL_ERROR \
-{ GLenum error; \
-  while ( (error = glGetError()) != GL_NO_ERROR) { \
-    printf( "OpenGL ERROR: %s\nCHECK POINT: %s (line %d)\n", gluErrorString(error), __FILE__, __LINE__ ); \
-    assert(error == GL_NO_ERROR); \
-  } \
-}
 
 using namespace std;
 
@@ -28,8 +21,7 @@ RenderableMaterialInstance::~RenderableMaterialInstance()
 
 void RenderableMaterialInstance::Draw(const glm::mat4 &model) const
 {
-    assert( 0 != ProgramID() );
-    glUseProgram( ProgramID() );
+    CHECK_OPENGL_ERROR
     assert( IsBind() );
     CHECK_OPENGL_ERROR
 

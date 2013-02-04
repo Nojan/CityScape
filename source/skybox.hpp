@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 
 class Texture2D;
+class ShaderProgram;
 
 class Skybox {
 public:
@@ -14,7 +15,7 @@ public:
     Skybox(Texture2D& xPos, Texture2D& xNeg, Texture2D& yPos, Texture2D& yNeg, Texture2D& zPos, Texture2D& zNeg);
     ~Skybox();
 
-    void Draw(GLuint programID);
+    void Draw(ShaderProgram * programShader);
 
 private:
     GLuint mIndexBufferId;

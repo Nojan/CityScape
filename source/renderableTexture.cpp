@@ -1,6 +1,7 @@
 #include "renderableTexture.hpp"
 
 #include "camera.hpp"
+#include "renderer.hpp"
 #include "root.hpp"
 
 #include "objloader.hpp"
@@ -21,17 +22,16 @@ RenderableTextureInstance::~RenderableTextureInstance()
 
 void RenderableTextureInstance::Draw(const glm::mat4 &model) const
 {
-    assert( 0 != ProgramID() );
-    glUseProgram( ProgramID() );
+    CHECK_OPENGL_ERROR
     assert( IsBind() );
 
     // Get a handle for our buffers
-    GLuint vertexPosition_modelspaceID = glGetAttribLocation(ProgramID(), "vertexPosition_modelspace");
-    GLuint vertexNormal_modelspaceID   = glGetAttribLocation(ProgramID(), "vertexNormal_modelspace");
-    GLuint vertexUVID                  = glGetAttribLocation(ProgramID(), "vertexUV");
-    GLuint textureID                   = glGetUniformLocation(ProgramID(), "textureSampler");
-    GLuint matrixMVP_ID                = glGetUniformLocation(ProgramID(), "MVP");
-    GLuint matrixMV_ID                 = glGetUniformLocation(ProgramID(), "MV");
+    GLuint vertexPosition_modelspaceID = glGetAttribLocation(ProgramID(), "vertexPosition_modelspace"); CHECK_OPENGL_ERROR
+    GLuint vertexNormal_modelspaceID   = glGetAttribLocation(ProgramID(), "vertexNormal_modelspace"); CHECK_OPENGL_ERROR
+    GLuint vertexUVID                  = glGetAttribLocation(ProgramID(), "vertexUV"); CHECK_OPENGL_ERROR
+    GLuint textureID                   = glGetUniformLocation(ProgramID(), "textureSampler"); CHECK_OPENGL_ERROR
+    GLuint matrixMVP_ID                = glGetUniformLocation(ProgramID(), "MVP"); CHECK_OPENGL_ERROR
+    GLuint matrixMV_ID                 = glGetUniformLocation(ProgramID(), "MV"); CHECK_OPENGL_ERROR
 
     glm::mat4 MVP = Root::Instance().GetCamera()->ProjectionView() * model;
     glm::mat4 MV = Root::Instance().GetCamera()->View() * model;
@@ -96,31 +96,31 @@ void RenderableTextureInstance::Bind()
 {
     RenderableInstance::Bind();
 
-    glGenBuffers(1, &mIndexbuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexbuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index.size() * sizeof(unsigned short), index.data() , GL_STATIC_DRAW);
+    glGenBuffers(1, &mIndexbuffer); CHECK_OPENGL_ERROR
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexbuffer); CHECK_OPENGL_ERROR
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index.size() * sizeof(unsigned short), index.data() , GL_STATIC_DRAW); CHECK_OPENGL_ERROR
 
-    glGenBuffers(1, &mVertexbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexbuffer);
-    glBufferData(GL_ARRAY_BUFFER, vertexPosition.size()*sizeof(glm::vec3), vertexPosition.data(), GL_STATIC_DRAW);
+    glGenBuffers(1, &mVertexbuffer); CHECK_OPENGL_ERROR
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexbuffer); CHECK_OPENGL_ERROR
+    glBufferData(GL_ARRAY_BUFFER, vertexPosition.size()*sizeof(glm::vec3), vertexPosition.data(), GL_STATIC_DRAW); CHECK_OPENGL_ERROR
 
-    glGenBuffers(1, &mVertexNormalbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexNormalbuffer);
-    glBufferData(GL_ARRAY_BUFFER, vertexNormal.size()*sizeof(glm::vec3), vertexNormal.data(), GL_STATIC_DRAW);
+    glGenBuffers(1, &mVertexNormalbuffer); CHECK_OPENGL_ERROR
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexNormalbuffer); CHECK_OPENGL_ERROR
+    glBufferData(GL_ARRAY_BUFFER, vertexNormal.size()*sizeof(glm::vec3), vertexNormal.data(), GL_STATIC_DRAW); CHECK_OPENGL_ERROR
 
-    glGenBuffers(1, &mUvbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, mUvbuffer);
-    glBufferData(GL_ARRAY_BUFFER, uv.size()*sizeof(glm::vec2), uv.data(), GL_STATIC_DRAW);
+    glGenBuffers(1, &mUvbuffer); CHECK_OPENGL_ERROR
+    glBindBuffer(GL_ARRAY_BUFFER, mUvbuffer); CHECK_OPENGL_ERROR
+    glBufferData(GL_ARRAY_BUFFER, uv.size()*sizeof(glm::vec2), uv.data(), GL_STATIC_DRAW); CHECK_OPENGL_ERROR
 
-    glGenTextures(1, &mTexturebuffer);
-    glBindTexture(GL_TEXTURE_2D, mTexturebuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->getWidth(), texture->getHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, texture->getData());
+    glGenTextures(1, &mTexturebuffer); CHECK_OPENGL_ERROR
+    glBindTexture(GL_TEXTURE_2D, mTexturebuffer); CHECK_OPENGL_ERROR
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->getWidth(), texture->getHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, texture->getData()); CHECK_OPENGL_ERROR
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); CHECK_OPENGL_ERROR
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); CHECK_OPENGL_ERROR
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); CHECK_OPENGL_ERROR
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); CHECK_OPENGL_ERROR
+    glGenerateMipmap(GL_TEXTURE_2D); CHECK_OPENGL_ERROR
 }
 
 GLuint RenderableTextureInstance::IndexId() const
@@ -157,11 +157,11 @@ void RenderableTextureInstance::Unbind()
 {
     RenderableInstance::Unbind();
 
-    glDeleteBuffers(1, &mIndexbuffer);
-    glDeleteBuffers(1, &mVertexbuffer);
-    glDeleteBuffers(1, &mVertexNormalbuffer);
-    glDeleteBuffers(1, &mUvbuffer);
-    glDeleteBuffers(1, &mTexturebuffer);
+    glDeleteBuffers(1, &mIndexbuffer); CHECK_OPENGL_ERROR
+    glDeleteBuffers(1, &mVertexbuffer); CHECK_OPENGL_ERROR
+    glDeleteBuffers(1, &mVertexNormalbuffer); CHECK_OPENGL_ERROR
+    glDeleteBuffers(1, &mUvbuffer); CHECK_OPENGL_ERROR
+    glDeleteBuffers(1, &mTexturebuffer); CHECK_OPENGL_ERROR
 }
 
 RenderableTextureInstance * RenderableTextureInstance::MakeInstanceFrom(char const * pathToObj, char const * pathToTexture)

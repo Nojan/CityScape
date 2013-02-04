@@ -112,15 +112,14 @@ namespace Street_Generator
         }
     }
 
-    void GenerateStreetScene(const unsigned int width, const unsigned int length, vector<RenderableInstance*>& buildingInstance, vector<RenderableInstance*>& streetInstance, vector<Renderable>& scene)
+    void GenerateStreetScene(const unsigned int width, const unsigned int length, vector<RenderableInstance*>& buildingInstance, vector<RenderableInstance*>& streetInstance, vector<Renderable*>& scene)
     {
         assert( scene.empty() );
         const unsigned int size = width*length;
         vector<Area> streetConfiguration;
         GenerateStreetConfiguration(width, length, streetConfiguration);
         assert( size == streetConfiguration.size() );
-        scene.resize( streetConfiguration.size() );
-        assert( size == scene.size() );
+        scene.reserve( size );
 
         for(unsigned int i=0; i<width; ++i )
         {
@@ -132,22 +131,25 @@ namespace Street_Generator
                 const BoundingBox2D bbox = streetConfiguration[index].bb;
                 const vec2 position = bbox.Min();
                 mat4 matTransform = translate(mat4(1.f), vec3(position.x, 0.f, position.y));
+                Renderable * renderable = new Renderable();
                 if( AreaType::building == type )
                 {
                     const float height = static_cast<float>(rand()%46+4);
                     RenderableTextureInstance * building = Building_Generator::GenerateBox(bbox.Size().x, bbox.Size().y, height);
                     buildingInstance.push_back(building);
                     matTransform = translate(matTransform, vec3(bbox.Size().x/2.f, 0.f, bbox.Size().y/2.f));
-                    scene[index].Init(matTransform, building);
+                    renderable->Init(matTransform, building);
                 }
                 else
                 {
                     assert( AreaType::street == type || AreaType::corner == type );
                     RenderableMaterialInstance * street = Building_Generator::GenerateFloor(bbox.Size().x, bbox.Size().y);
                     streetInstance.push_back(street);
-                    scene[index].Init(matTransform, street);
+                    renderable->Init(matTransform, street);
                 }
+                scene.push_back(renderable);
             }
         }
+        assert( size == scene.size() );
     }
 }

@@ -9,6 +9,7 @@
 #include <vector>
 
 class Texture2D;
+class ShaderProgram;
 
 class RenderableInstance
 {
@@ -16,7 +17,7 @@ public:
     RenderableInstance();
     virtual ~RenderableInstance();
 
-    void Init(GLuint programID);
+    void Init(ShaderProgram * programShader);
     GLuint ProgramID() const;
 
     virtual void Draw(const glm::mat4 &model) const = 0;
@@ -25,9 +26,11 @@ public:
     virtual void Unbind();
     bool IsBind() const;
 
+    void UseShaderProgramIFN() const;
+
 private:
     bool mBind;
-    GLuint mProgramID;
+    ShaderProgram * mProgramShader;
 };
 
 class Renderable {
@@ -47,20 +50,6 @@ private:
     RenderableInstance const* mInstance;
 };
 
-struct RenderableInstanceSorter
-{
-   bool operator() (const RenderableInstance & lhs, const RenderableInstance & rhs) const
-   {
-      return lhs.ProgramID() <= rhs.ProgramID();
-   }
-};
-
-struct RenderableSorter
-{
-   bool operator() (const Renderable & lhs, const Renderable & rhs) const
-   {
-      return lhs.Instance()->ProgramID() <= rhs.Instance()->ProgramID();
-   }
-};
+bool RenderableSorter(const Renderable * lhs, const Renderable * rhs);
 
 #endif

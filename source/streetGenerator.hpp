@@ -9,7 +9,7 @@
 
 namespace Street_Generator
 {
-    void GenerateStreetScene(const unsigned int width, const unsigned int length, std::vector<RenderableInstance*>& buildingInstance, std::vector<RenderableInstance*>& streetInstance, std::vector<Renderable>& scene);
+    void GenerateStreetScene(const unsigned int width, const unsigned int length, std::vector<RenderableInstance*>& buildingInstance, std::vector<RenderableInstance*>& streetInstance, std::vector<Renderable*>& scene);
 }
 
 #endif //STREET_GENERATOR_HPP

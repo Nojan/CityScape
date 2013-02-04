@@ -2,7 +2,7 @@
 
 #include "camera.hpp"
 #include "root.hpp"
-
+#include "shader.hpp"
 #include "texture.hpp"
 
 #include "glm/gtc/type_ptr.hpp"
@@ -78,14 +78,15 @@ Skybox::~Skybox()
     glDeleteBuffers(1, &mVertexBufferId);
 }
 
-void Skybox::Draw(GLuint programID)
+void Skybox::Draw(ShaderProgram * programShader)
 {
-    glUseProgram(programID);
+    assert(NULL != programShader);
+    programShader->UseShaderProgramIFN();
 
     // Get a handle for our buffers
-    GLuint vertexPositionID = glGetAttribLocation(programID, "vertexPosition");
-    GLuint cubemapID        = glGetUniformLocation(programID, "cubemapSampler");
-    GLuint matrixMVP_ID     = glGetUniformLocation(programID, "MVP");
+    GLuint vertexPositionID = glGetAttribLocation(programShader->ProgramID(), "vertexPosition");
+    GLuint cubemapID        = glGetUniformLocation(programShader->ProgramID(), "cubemapSampler");
+    GLuint matrixMVP_ID     = glGetUniformLocation(programShader->ProgramID(), "MVP");
 
     glm::mat4 model = glm::scale(glm::mat4(1.0f),glm::vec3(100,100,100));
     const Camera * camera = Root::Instance().GetCamera();

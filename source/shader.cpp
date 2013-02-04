@@ -1,4 +1,7 @@
-//from http://www.opengl-tutorial.org/
+#include "shader.hpp"
+GLuint ShaderProgram::mCurrentProgramID = 0;
+
+#include "renderer.hpp"
 
 #include <assert.h>
 #include <stdio.h>
@@ -7,20 +10,59 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-using namespace std;
-
 #include <stdlib.h>
 #include <string.h>
-
 #include <GL/glew.h>
+using namespace std;
 
-#include "shader.hpp"
+ShaderProgram::ShaderProgram(GLuint programID)
+{
+    assert(programID != 0);
+    mProgramID = programID;
+}
 
+ShaderProgram::~ShaderProgram()
+{
+    glDeleteProgram(mProgramID); CHECK_OPENGL_ERROR
+}
+
+GLuint ShaderProgram::ProgramID() const
+{
+    return mProgramID;
+}
+
+void ShaderProgram::UseShaderProgramIFN() const
+{
+    if( !IsBind() )
+    {
+        Bind(); CHECK_OPENGL_ERROR
+    }
+}
+
+bool ShaderProgram::IsBind() const
+{
+    return mProgramID == mCurrentProgramID;
+}
+
+void ShaderProgram::Bind() const
+{
+    assert(mProgramID != mCurrentProgramID);
+    glUseProgram(mProgramID); CHECK_OPENGL_ERROR
+    mCurrentProgramID = mProgramID;
+    CHECK_OPENGL_ERROR
+}
+
+bool ShaderProgram::operator== (const ShaderProgram & rhs) const
+{
+    ProgramID() == rhs.ProgramID();
+}
+
+//from http://www.opengl-tutorial.org/
 GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path){
 
 	// Create the shaders
-	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+    GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER); CHECK_OPENGL_ERROR
+    GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER); CHECK_OPENGL_ERROR
 
 	// Read the Vertex Shader code from the file
 	std::string VertexShaderCode;
@@ -50,7 +92,7 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
 	// Compile Vertex Shader
 	printf("Compiling shader : %s\n", vertex_file_path);
 	char const * VertexSourcePointer = VertexShaderCode.c_str();
-	glShaderSource(VertexShaderID, 1, &VertexSourcePointer , NULL);
+    glShaderSource(VertexShaderID, 1, &VertexSourcePointer , NULL);
 	glCompileShader(VertexShaderID);
 
 	// Check Vertex Shader
