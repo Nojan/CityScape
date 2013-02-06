@@ -11,6 +11,36 @@
 
 using namespace std;
 
+MaterialShaderProgram::MaterialShaderProgram(GLuint programID)
+: ShaderProgram(programID)
+, mVertexPosition_modelspaceID(0)
+, mVertexNormal_modelspaceID(0)
+, mMaterial_ambientFactor_ID(0)
+, mMaterial_diffuseFactor_ID(0)
+, mMaterial_specularFactor_ID(0)
+, mMaterial_emissiveValue_ID(0)
+, mMaterial_shininess_ID(0)
+, mMatrixMVP_ID(0)
+, mMatrixMV_ID(0)
+{
+}
+
+void MaterialShaderProgram::Bind()
+{
+    ShaderProgram::Bind();
+
+    mVertexPosition_modelspaceID = glGetAttribLocation(ProgramID(), "vertexPosition_modelspace"); CHECK_OPENGL_ERROR
+    mVertexNormal_modelspaceID   = glGetAttribLocation(ProgramID(), "vertexNormal_modelspace"); CHECK_OPENGL_ERROR
+    mMaterial_ambientFactor_ID   = glGetUniformLocation(ProgramID(), "material.ambientFactor"); CHECK_OPENGL_ERROR
+    mMaterial_diffuseFactor_ID   = glGetUniformLocation(ProgramID(), "material.diffuseFactor"); CHECK_OPENGL_ERROR
+    mMaterial_specularFactor_ID  = glGetUniformLocation(ProgramID(), "material.specularFactor"); CHECK_OPENGL_ERROR
+    mMaterial_emissiveValue_ID   = glGetUniformLocation(ProgramID(), "material.emissiveValue"); CHECK_OPENGL_ERROR
+    mMaterial_shininess_ID       = glGetUniformLocation(ProgramID(), "material.shininess"); CHECK_OPENGL_ERROR
+    mMatrixMVP_ID                = glGetUniformLocation(ProgramID(), "MVP"); CHECK_OPENGL_ERROR
+    mMatrixMV_ID                 = glGetUniformLocation(ProgramID(), "MV"); CHECK_OPENGL_ERROR
+}
+
+
 RenderableMaterialInstance::RenderableMaterialInstance()
 {
 }
@@ -23,18 +53,20 @@ void RenderableMaterialInstance::Draw(const glm::mat4 &model) const
 {
     CHECK_OPENGL_ERROR
     assert( IsBind() );
-    CHECK_OPENGL_ERROR
+
+    const MaterialShaderProgram* shaderProgram = dynamic_cast<const MaterialShaderProgram*>(GetShaderProgram());
+    assert(NULL != shaderProgram);
 
     // Get a handle for our buffers
-    GLuint vertexPosition_modelspaceID = glGetAttribLocation(ProgramID(), "vertexPosition_modelspace"); CHECK_OPENGL_ERROR
-    GLuint vertexNormal_modelspaceID   = glGetAttribLocation(ProgramID(), "vertexNormal_modelspace"); CHECK_OPENGL_ERROR
-    GLuint material_ambientFactor_ID   = glGetUniformLocation(ProgramID(), "material.ambientFactor"); CHECK_OPENGL_ERROR
-    GLuint material_diffuseFactor_ID   = glGetUniformLocation(ProgramID(), "material.diffuseFactor"); CHECK_OPENGL_ERROR
-    GLuint material_specularFactor_ID  = glGetUniformLocation(ProgramID(), "material.specularFactor"); CHECK_OPENGL_ERROR
-    GLuint material_emissiveValue_ID   = glGetUniformLocation(ProgramID(), "material.emissiveValue"); CHECK_OPENGL_ERROR
-    GLuint material_shininess_ID       = glGetUniformLocation(ProgramID(), "material.shininess"); CHECK_OPENGL_ERROR
-    GLuint matrixMVP_ID                = glGetUniformLocation(ProgramID(), "MVP"); CHECK_OPENGL_ERROR
-    GLuint matrixMV_ID                 = glGetUniformLocation(ProgramID(), "MV"); CHECK_OPENGL_ERROR
+    GLuint vertexPosition_modelspaceID = shaderProgram->VertexPosition_modelspaceID();
+    GLuint vertexNormal_modelspaceID   = shaderProgram->VertexNormal_modelspaceID();
+    GLuint material_ambientFactor_ID   = shaderProgram->Material_ambientFactor_ID();
+    GLuint material_diffuseFactor_ID   = shaderProgram->Material_diffuseFactor_ID();
+    GLuint material_specularFactor_ID  = shaderProgram->Material_specularFactor_ID();
+    GLuint material_emissiveValue_ID   = shaderProgram->Material_emissiveValue_ID();
+    GLuint material_shininess_ID       = shaderProgram->Material_shininess_ID();
+    GLuint matrixMVP_ID                = shaderProgram->MatrixMVP_ID();
+    GLuint matrixMV_ID                 = shaderProgram->MatrixMV_ID();
 
     glm::mat4 MVP = Root::Instance().GetCamera()->ProjectionView() * model;
     glm::mat4 MV = Root::Instance().GetCamera()->View() * model;

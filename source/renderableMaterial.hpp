@@ -2,6 +2,7 @@
 #define RENDERABLE_MATERIAL_HPP
 
 #include "renderable.hpp"
+#include "shader.hpp"
 
 class RenderableMaterialInstance : public RenderableInstance
 {
@@ -34,5 +35,36 @@ private:
     GLuint mVertexbuffer;
     GLuint mVertexNormalbuffer;
 };
+
+
+class MaterialShaderProgram : public ShaderProgram
+{
+public:
+    MaterialShaderProgram(GLuint programID);
+
+    virtual void Bind();
+
+    GLuint VertexPosition_modelspaceID() const { return mVertexPosition_modelspaceID; }
+    GLuint VertexNormal_modelspaceID() const { return mVertexNormal_modelspaceID; }
+    GLuint Material_ambientFactor_ID() const { return mMaterial_ambientFactor_ID; }
+    GLuint Material_diffuseFactor_ID() const { return mMaterial_diffuseFactor_ID; }
+    GLuint Material_specularFactor_ID() const { return mMaterial_specularFactor_ID; }
+    GLuint Material_emissiveValue_ID() const { return mMaterial_emissiveValue_ID; }
+    GLuint Material_shininess_ID() const { return mMaterial_shininess_ID; }
+    GLuint MatrixMVP_ID() const { return mMatrixMVP_ID; }
+    GLuint MatrixMV_ID() const { return mMatrixMV_ID; }
+
+private:
+    GLuint mVertexPosition_modelspaceID;
+    GLuint mVertexNormal_modelspaceID;
+    GLuint mMaterial_ambientFactor_ID;
+    GLuint mMaterial_diffuseFactor_ID;
+    GLuint mMaterial_specularFactor_ID;
+    GLuint mMaterial_emissiveValue_ID;
+    GLuint mMaterial_shininess_ID;
+    GLuint mMatrixMVP_ID;
+    GLuint mMatrixMV_ID;
+};
+
 
 #endif

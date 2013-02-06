@@ -31,7 +31,7 @@ GLuint ShaderProgram::ProgramID() const
     return mProgramID;
 }
 
-void ShaderProgram::UseShaderProgramIFN() const
+void ShaderProgram::UseShaderProgramIFN()
 {
     if( !IsBind() )
     {
@@ -44,12 +44,11 @@ bool ShaderProgram::IsBind() const
     return mProgramID == mCurrentProgramID;
 }
 
-void ShaderProgram::Bind() const
+void ShaderProgram::Bind()
 {
     assert(mProgramID != mCurrentProgramID);
     glUseProgram(mProgramID); CHECK_OPENGL_ERROR
     mCurrentProgramID = mProgramID;
-    CHECK_OPENGL_ERROR
 }
 
 bool ShaderProgram::operator== (const ShaderProgram & rhs) const

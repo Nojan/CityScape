@@ -33,6 +33,11 @@ GLuint RenderableInstance::ProgramID() const
     return mProgramShader->ProgramID();
 }
 
+const ShaderProgram * RenderableInstance::GetShaderProgram() const
+{
+    return mProgramShader;
+}
+
 void RenderableInstance::Bind()
 {
     assert(false == mBind);

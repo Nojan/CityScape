@@ -11,6 +11,29 @@
 
 using namespace std;
 
+TextureShaderProgram::TextureShaderProgram(GLuint programID)
+: ShaderProgram(programID)
+, mVertexPosition_modelspaceID(0)
+, mVertexNormal_modelspaceID(0)
+, mVertexUVID(0)
+, mTextureID(0)
+, mMatrixMVP_ID(0)
+, mMatrixMV_ID(0)
+{
+}
+
+void TextureShaderProgram::Bind()
+{
+    ShaderProgram::Bind();
+
+    mVertexPosition_modelspaceID = glGetAttribLocation(ProgramID(), "vertexPosition_modelspace"); CHECK_OPENGL_ERROR
+    mVertexNormal_modelspaceID   = glGetAttribLocation(ProgramID(), "vertexNormal_modelspace"); CHECK_OPENGL_ERROR
+    mVertexUVID                  = glGetAttribLocation(ProgramID(), "vertexUV"); CHECK_OPENGL_ERROR
+    mTextureID                   = glGetUniformLocation(ProgramID(), "textureSampler"); CHECK_OPENGL_ERROR
+    mMatrixMVP_ID                = glGetUniformLocation(ProgramID(), "MVP"); CHECK_OPENGL_ERROR
+    mMatrixMV_ID                 = glGetUniformLocation(ProgramID(), "MV"); CHECK_OPENGL_ERROR
+}
+
 RenderableTextureInstance::RenderableTextureInstance()
 : texture(new Texture2D())
 {}
@@ -25,13 +48,16 @@ void RenderableTextureInstance::Draw(const glm::mat4 &model) const
     CHECK_OPENGL_ERROR
     assert( IsBind() );
 
+    const TextureShaderProgram* shaderProgram = dynamic_cast<const TextureShaderProgram*>(GetShaderProgram());
+    assert(NULL != shaderProgram);
+
     // Get a handle for our buffers
-    GLuint vertexPosition_modelspaceID = glGetAttribLocation(ProgramID(), "vertexPosition_modelspace"); CHECK_OPENGL_ERROR
-    GLuint vertexNormal_modelspaceID   = glGetAttribLocation(ProgramID(), "vertexNormal_modelspace"); CHECK_OPENGL_ERROR
-    GLuint vertexUVID                  = glGetAttribLocation(ProgramID(), "vertexUV"); CHECK_OPENGL_ERROR
-    GLuint textureID                   = glGetUniformLocation(ProgramID(), "textureSampler"); CHECK_OPENGL_ERROR
-    GLuint matrixMVP_ID                = glGetUniformLocation(ProgramID(), "MVP"); CHECK_OPENGL_ERROR
-    GLuint matrixMV_ID                 = glGetUniformLocation(ProgramID(), "MV"); CHECK_OPENGL_ERROR
+    GLuint vertexPosition_modelspaceID = shaderProgram->VertexPosition_modelspaceID();
+    GLuint vertexNormal_modelspaceID   = shaderProgram->VertexNormal_modelspaceID();
+    GLuint vertexUVID                  = shaderProgram->VertexUVID();
+    GLuint textureID                   = shaderProgram->TextureID();
+    GLuint matrixMVP_ID                = shaderProgram->MatrixMVP_ID();
+    GLuint matrixMV_ID                 = shaderProgram->MatrixMV_ID();
 
     glm::mat4 MVP = Root::Instance().GetCamera()->ProjectionView() * model;
     glm::mat4 MV = Root::Instance().GetCamera()->View() * model;

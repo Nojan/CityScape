@@ -20,6 +20,8 @@ public:
     void Init(ShaderProgram * programShader);
     GLuint ProgramID() const;
 
+    const ShaderProgram * GetShaderProgram() const;
+
     virtual void Draw(const glm::mat4 &model) const = 0;
 
     virtual void Bind();

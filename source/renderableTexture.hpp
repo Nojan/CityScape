@@ -2,6 +2,7 @@
 #define RENDERABLE_TEXTURE_HPP
 
 #include "renderable.hpp"
+#include "shader.hpp"
 
 class Texture2D;
 
@@ -36,6 +37,29 @@ private:
     GLuint mVertexNormalbuffer;
     GLuint mUvbuffer;
     GLuint mTexturebuffer;
+};
+
+class TextureShaderProgram : public ShaderProgram
+{
+public:
+    TextureShaderProgram(GLuint programID);
+
+    virtual void Bind();
+
+    GLuint VertexPosition_modelspaceID() const { return mVertexPosition_modelspaceID; }
+    GLuint VertexNormal_modelspaceID() const { return mVertexNormal_modelspaceID; }
+    GLuint VertexUVID() const { return mVertexUVID; }
+    GLuint TextureID() const { return mTextureID; }
+    GLuint MatrixMVP_ID() const { return mMatrixMVP_ID; }
+    GLuint MatrixMV_ID() const { return mMatrixMV_ID; }
+
+private:
+    GLuint mVertexPosition_modelspaceID;
+    GLuint mVertexNormal_modelspaceID;
+    GLuint mVertexUVID;
+    GLuint mTextureID;
+    GLuint mMatrixMVP_ID;
+    GLuint mMatrixMV_ID;
 };
 
 #endif

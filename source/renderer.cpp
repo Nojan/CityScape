@@ -34,9 +34,9 @@ void Renderer::Init()
     // Create and compile our GLSL program from the shaders
     GLuint loadedShaderID = 0;
     loadedShaderID = LoadShaders( "../shader/SimpleVertexShader.vertexshader", "../shader/SimpleFragmentShader.fragmentshader" );
-    mTextureProgram = new ShaderProgram(loadedShaderID);
+    mTextureProgram = new TextureShaderProgram(loadedShaderID);
     loadedShaderID = LoadShaders( "../shader/MaterialVertex.shader", "../shader/MaterialFragment.shader" );
-    mMaterialProgram = new ShaderProgram(loadedShaderID);
+    mMaterialProgram = new MaterialShaderProgram(loadedShaderID);
     loadedShaderID  = LoadShaders( "../shader/Skybox.vertexshader", "../shader/Skybox.fragmentshader" );
     mSkyboxProgram = new ShaderProgram(loadedShaderID);
     cout << "Shader loaded." << endl;
@@ -94,9 +94,8 @@ void Renderer::Update()
     glClearDepth(1.0f); CHECK_OPENGL_ERROR
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); CHECK_OPENGL_ERROR
 
-    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST); CHECK_OPENGL_ERROR
     mSkybox->Draw(mSkyboxProgram);
-
     glEnable(GL_DEPTH_TEST); CHECK_OPENGL_ERROR
     glDepthFunc(GL_LESS); CHECK_OPENGL_ERROR
     //glEnable(GL_CULL_FACE); CHECK_OPENGL_ERROR

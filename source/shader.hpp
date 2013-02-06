@@ -12,10 +12,10 @@ public:
     ~ShaderProgram();
 
     GLuint ProgramID() const;
-    void UseShaderProgramIFN() const;
+    void UseShaderProgramIFN();
 
     bool IsBind() const;
-    void Bind() const;
+    virtual void Bind();
 
     //operator
     bool operator== (const ShaderProgram & rhs) const;
