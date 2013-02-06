@@ -25,9 +25,6 @@ void RenderableMaterialInstance::Draw(const glm::mat4 &model) const
     assert( IsBind() );
     CHECK_OPENGL_ERROR
 
-    glEnable(GL_COLOR_MATERIAL);
-    glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
-
     // Get a handle for our buffers
     GLuint vertexPosition_modelspaceID = glGetAttribLocation(ProgramID(), "vertexPosition_modelspace"); CHECK_OPENGL_ERROR
     GLuint vertexNormal_modelspaceID   = glGetAttribLocation(ProgramID(), "vertexNormal_modelspace"); CHECK_OPENGL_ERROR
@@ -107,6 +104,9 @@ void RenderableMaterialInstance::Bind()
     glGenBuffers(1, &mVertexNormalbuffer); CHECK_OPENGL_ERROR
     glBindBuffer(GL_ARRAY_BUFFER, mVertexNormalbuffer); CHECK_OPENGL_ERROR
     glBufferData(GL_ARRAY_BUFFER, vertexNormal.size()*sizeof(glm::vec3), vertexNormal.data(), GL_STATIC_DRAW); CHECK_OPENGL_ERROR
+
+    glEnable(GL_COLOR_MATERIAL); CHECK_OPENGL_ERROR
+    glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE); CHECK_OPENGL_ERROR
 }
 
 GLuint RenderableMaterialInstance::IndexId() const

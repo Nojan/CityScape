@@ -41,7 +41,6 @@ void RenderableTextureInstance::Draw(const glm::mat4 &model) const
     glUniformMatrix4fv(matrixMV_ID, 1, GL_FALSE, glm::value_ptr(MV));
 
     // Bind our texture in Texture Unit 0
-    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, TextureId());
     glUniform1i(textureID, 0);
 
@@ -121,6 +120,8 @@ void RenderableTextureInstance::Bind()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); CHECK_OPENGL_ERROR
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); CHECK_OPENGL_ERROR
     glGenerateMipmap(GL_TEXTURE_2D); CHECK_OPENGL_ERROR
+
+    glActiveTexture(GL_TEXTURE0); CHECK_OPENGL_ERROR
 }
 
 GLuint RenderableTextureInstance::IndexId() const
