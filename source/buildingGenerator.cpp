@@ -106,7 +106,8 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
     public:
         void Clear();
         void AppendMesh(Mesh const& mesh);
-        void Transform(mat3x3 const& rotate, vec3 const& translate);
+        void Transform(mat3x3 const& rotate);
+        void Transform(vec3 const& translate);
 
         std::vector<unsigned short> index;
         std::vector<glm::vec3> vertexPosition;
@@ -122,13 +123,22 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         uv.clear();
     }
 
-    void Mesh::Transform(mat3x3 const& rotate, vec3 const& translate)
+    void Mesh::Transform(mat3x3 const& rotate)
     {
         const size_t vectorSize = vertexPosition.size();
         for(size_t i=0; i<vectorSize; ++i)
         {
-            vertexPosition[i] = rotate * (translate + vertexPosition[i]);
+            vertexPosition[i] = rotate * vertexPosition[i];
             vertexNormal[i] = rotate * vertexNormal[i];
+        }
+    }
+
+    void Mesh::Transform(vec3 const& translate)
+    {
+        const size_t vectorSize = vertexPosition.size();
+        for(size_t i=0; i<vectorSize; ++i)
+        {
+            vertexPosition[i] = translate + vertexPosition[i];
         }
     }
 
@@ -194,7 +204,7 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
 
         rotation = rotate(rotation, 90.f, vec3(1.f, 0.f, 0.f)); //WTF not rad ?
         CreateQuad(subMesh, widthf, lengthf, vec2(0.f, 0.f), vec2(0.f, 0.f));
-        subMesh.Transform(mat3(rotation), vec3(0.f, 0.f, 0.f));
+        subMesh.Transform(mat3(rotation));
         mesh.AppendMesh(subMesh);
 
         instance->index.insert(instance->index.end(), mesh.index.begin(), mesh.index.end());
@@ -230,8 +240,8 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         //roof
         rotation = rotate(rotation, -90.f, vec3(1.f, 0.f, 0.f)); //WTF not rad ?
         CreateQuad(subMesh, widthf, lengthf, vec2(0.f, 0.f), vec2(0.f, 0.f));
-        subMesh.Transform(mat3(rotation), vec3(0.f, 0.f, 0.f));
-        subMesh.Transform(mat3(1.f), vec3(-widthf*0.5f, heightf, lengthf*0.5f));
+        subMesh.Transform(mat3(rotation));
+        subMesh.Transform(vec3(-widthf*0.5f, heightf, lengthf*0.5f));
         mesh.AppendMesh(subMesh);
 
         //wall
@@ -239,7 +249,7 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         subMesh.Clear();
         CreateQuad(subMesh, widthf, heightf, vec2(0.f, 0.f), vec2(periRatio, heightRatio));
         lastPeriRatio = periRatio;
-        subMesh.Transform(mat3(rotation), vec3(-widthf*0.5f, 0.f, lengthf*0.5f));
+        subMesh.Transform(vec3(-widthf*0.5f, 0.f, lengthf*0.5f));
         mesh.AppendMesh(subMesh);
 
         subMesh.Clear();
@@ -247,7 +257,8 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         periRatio+=lengthRatio;
         CreateQuad(subMesh, lengthf, heightf, vec2(lastPeriRatio, 0.f), vec2(periRatio, heightRatio));
         lastPeriRatio = periRatio;
-        subMesh.Transform(mat3(rotation), vec3(-lengthf*0.5f, 0.f, widthf*0.5f));
+        subMesh.Transform(vec3(-lengthf*0.5f, 0.f, widthf*0.5f));
+        subMesh.Transform(mat3(rotation));
         mesh.AppendMesh(subMesh);
 
         subMesh.Clear();
@@ -255,7 +266,8 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         periRatio+=widthRatio;
         CreateQuad(subMesh, widthf, heightf, vec2(lastPeriRatio, 0.f), vec2(periRatio, heightRatio));
         lastPeriRatio = periRatio;
-        subMesh.Transform(mat3(rotation), vec3(-widthf*0.5f, 0.f, lengthf*0.5f));
+        subMesh.Transform(vec3(-widthf*0.5f, 0.f, lengthf*0.5f));
+        subMesh.Transform(mat3(rotation));
         mesh.AppendMesh(subMesh);
 
         subMesh.Clear();
@@ -263,7 +275,8 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
         periRatio+=lengthRatio;
         CreateQuad(subMesh, lengthf, heightf, vec2(lastPeriRatio, 0.f), vec2(periRatio, heightRatio));
         lastPeriRatio = periRatio;
-        subMesh.Transform(mat3(rotation), vec3(-lengthf*0.5f, 0.f, widthf*0.5f));
+        subMesh.Transform(vec3(-lengthf*0.5f, 0.f, widthf*0.5f));
+        subMesh.Transform(mat3(rotation));
         mesh.AppendMesh(subMesh);
 
         instance->index.insert(instance->index.end(), mesh.index.begin(), mesh.index.end());
