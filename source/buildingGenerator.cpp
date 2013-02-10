@@ -14,17 +14,48 @@ using namespace glm;
 namespace Building_Generator
 {
 
-void SetWindowColor(Color::rgb * textureData, const Color::rgb color, const size_t buildingWidth, const size_t windowSize, const size_t witdhMargin, const size_t heightMargin )
+void SetWindowColor(Color::rgb * textureData, Color::hsv color, const size_t buildingWidth, const size_t windowSize, const size_t witdhMargin, const size_t heightMargin )
 {
     assert(witdhMargin < (windowSize/2));
     assert(heightMargin < (windowSize/2));
 
+    int horizontalNoiseCount = 0;
+    Color::hsv horizontalNoiseColor;
+
     for(size_t i=heightMargin; i+heightMargin<windowSize; ++i )
     {
         const size_t iOfsset = i*buildingWidth;
+        color.v += 0.05f;
+        if(color.v < 0.f)
+            color.v = 0.f;
+
+        if(horizontalNoiseCount <= 0)
+        {
+            const int horizontalProbality = rand()%windowSize;
+            const int horizontalProbalityThreshold = i+windowSize/2;
+            if(horizontalProbality > horizontalProbalityThreshold)
+            {
+                horizontalNoiseCount = rand()%windowSize;
+                horizontalNoiseColor.h = static_cast<float>(rand()%36)/10.f;
+                horizontalNoiseColor.s = 0.4f;
+            }
+        }
+
         for(size_t j=witdhMargin; j+witdhMargin<windowSize; ++j)
         {
-            textureData[iOfsset + j] = color;
+            Color::hsv finalcolor = color;
+            if(horizontalNoiseCount >= 0)
+            {
+                --horizontalNoiseCount;
+                finalcolor.h = horizontalNoiseColor.h;
+                finalcolor.s += horizontalNoiseColor.s;
+            }
+            const float noise = static_cast<float>(rand()%10-5)/100.f;
+            finalcolor.v += noise;
+            finalcolor.h = glm::clamp(finalcolor.h, 0.f, 3.6f);
+            finalcolor.s = glm::clamp(finalcolor.s, 0.f, 1.f);
+            finalcolor.v = glm::clamp(finalcolor.v, 0.f, 1.f);
+            textureData[iOfsset + j] = Color::hsv2rgb(finalcolor);
         }
     }
 }
@@ -52,23 +83,22 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
 
         const float hue = rand()%hueVector.size();
 
-        const Color::hsv halfLit = {hue, saturation, 0.5f};
-        const Color::hsv fullLit = {hue, saturation, 1.f};
+        const Color::hsv unLit = {0.f, 0.f, 0.f};
+        const Color::hsv halfLit = {hue, saturation, 0.2f};
+        const Color::hsv fullLit = {hue, saturation, 0.6f};
 
         const Color::rgb black = {0, 0, 0};
-        const Color::rgb grey  = Color::hsv2rgb(halfLit);
-        const Color::rgb white = Color::hsv2rgb(fullLit);
         // Tout en noir
         for(size_t i=0; i< textureSize; ++i)
         {
             textureData[i] = black;
         }
 
-        const int fullLitWindowPercent = rand()%5;
-        const int litWindowPercent = fullLitWindowPercent + rand()%15;
+        const int fullLitWindowPercent = 2 + rand()%10;
+        const int litWindowPercent = fullLitWindowPercent + 5 + rand()%25;
         const size_t windowPerRow = width/windowSize;
         const size_t windowPerColumn = height/windowSize;
-        Color::rgb currentColor = white;
+        Color::hsv currentColor = fullLit;
         for(size_t row = 0; row<windowPerColumn; row++)
         {
             const size_t rowOffset = row*windowSize*width;
@@ -87,15 +117,16 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
                     {
                         nb = rand()%6;
                         if(r<fullLitWindowPercent)
-                            currentColor = white;
+                            currentColor = fullLit;
                         else
-                            currentColor = grey;
+                            currentColor = halfLit;
                     }
                     else
-                        currentColor = black;
+                        currentColor = unLit;
                 }
 
-                SetWindowColor(textureData + (rowOffset + column*windowSize), currentColor, width, windowSize, windowWidthMargin, windowHeightMargin );
+                if( currentColor.v > 0.f )
+                    SetWindowColor(textureData + (rowOffset + column*windowSize), currentColor, width, windowSize, windowWidthMargin, windowHeightMargin );
             }
         }
         texture.setTexture(textureData, width, height);
