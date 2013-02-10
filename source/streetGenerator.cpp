@@ -112,7 +112,7 @@ namespace Street_Generator
         }
     }
 
-    void GenerateStreetScene(const unsigned int width, const unsigned int length, vector<RenderableInstance*>& buildingInstance, vector<RenderableInstance*>& streetInstance, vector<Renderable*>& scene)
+    void GenerateStreetScene(const unsigned int width, const unsigned int length, vector<RenderableInstance*>& buildingInstances, vector<RenderableInstance*>& streetInstances, vector<Renderable*>& scene)
     {
         assert( scene.empty() );
         const unsigned int size = width*length;
@@ -120,6 +120,9 @@ namespace Street_Generator
         GenerateStreetConfiguration(width, length, streetConfiguration);
         assert( size == streetConfiguration.size() );
         scene.reserve( size );
+
+        Renderable * street = new Renderable();
+        RenderableMaterialInstance * streetInstance = new RenderableMaterialInstance();
 
         for(unsigned int i=0; i<width; ++i )
         {
@@ -131,25 +134,40 @@ namespace Street_Generator
                 const BoundingBox2D bbox = streetConfiguration[index].bb;
                 const vec2 position = bbox.Min();
                 mat4 matTransform = translate(mat4(1.f), vec3(position.x, 0.f, position.y));
-                Renderable * renderable = new Renderable();
+
                 if( AreaType::building == type )
                 {
+                    Renderable * renderable = new Renderable();
                     const float height = static_cast<float>(rand()%46+4);
                     RenderableTextureInstance * building = Building_Generator::GenerateBox(bbox.Size().x, bbox.Size().y, height);
-                    buildingInstance.push_back(building);
+                    buildingInstances.push_back(building);
                     matTransform = translate(matTransform, vec3(bbox.Size().x/2.f, 0.f, bbox.Size().y/2.f));
                     renderable->Init(matTransform, building);
+                    scene.push_back(renderable);
                 }
                 else
                 {
                     assert( AreaType::street == type || AreaType::corner == type );
-                    RenderableMaterialInstance * street = Building_Generator::GenerateFloor(bbox.Size().x, bbox.Size().y);
-                    streetInstance.push_back(street);
-                    renderable->Init(matTransform, street);
+                    RenderableMaterialInstance * s = Building_Generator::GenerateFloor(bbox.Size().x, bbox.Size().y);
+                    // merge instance
+                    const size_t offsetIndex = streetInstance->vertexPosition.size();
+                    for(size_t index=0; index<s->vertexPosition.size(); ++index)
+                    {
+                        const vec4 position =  matTransform * vec4(s->vertexPosition.at(index), 1);
+                        streetInstance->vertexPosition.push_back(vec3(position));
+                        streetInstance->vertexNormal.push_back(s->vertexNormal.at(index));
+                    }
+                    for(size_t index=0; index<s->index.size(); ++index)
+                    {
+                        streetInstance->index.push_back(offsetIndex + s->index.at(index));
+                        assert(offsetIndex + s->index.at(index) < streetInstance->vertexNormal.size());
+                        assert( streetInstance->vertexNormal.at( offsetIndex + s->index.at(index) ) == s->vertexNormal.at(s->index.at(index)));
+                    }
                 }
-                scene.push_back(renderable);
             }
         }
-        assert( size == scene.size() );
+        street->Init(mat4(1.f), streetInstance);
+        streetInstances.push_back(streetInstance);
+        scene.push_back(street);
     }
 }

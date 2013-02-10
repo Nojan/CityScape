@@ -47,7 +47,6 @@ void Renderer::Init()
     const unsigned int sceneRootSize = 50;
 
     Street_Generator::GenerateStreetScene(sceneRootSize, sceneRootSize, mBuildingInstanceList, mFloorInstanceList, mScene);
-    assert( mScene.size() == sceneRootSize*sceneRootSize );
 
     for(size_t i=0; i<mBuildingInstanceList.size(); ++i)
     {
