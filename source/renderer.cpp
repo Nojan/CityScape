@@ -9,6 +9,8 @@
 #include "skyboxGenerator.hpp"
 #include "streetGenerator.hpp"
 
+#include "types.hpp"
+
 #include <algorithm>
 #include <iostream>
 #include <stdlib.h>
@@ -44,7 +46,7 @@ void Renderer::Init()
     // OpenGL Setting
     glClearColor(0.0f, 0.0f, 0.3f, 0.0f);
 
-    const unsigned int sceneRootSize = 50;
+    const uint sceneRootSize = 50;
 
     Street_Generator::GenerateStreetScene(sceneRootSize, sceneRootSize, mBuildingInstanceList, mFloorInstanceList, mScene);
 

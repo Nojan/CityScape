@@ -16,7 +16,7 @@ Texture2D::Texture2D()
 , mWidth(0)
 {}
 
-void Texture2D::setTexture(Color::rgb * data, unsigned int height, unsigned int width)
+void Texture2D::setTexture(Color::rgb * data, uint height, uint width)
 {
     assert(NULL == mData);
     mData = data;
@@ -35,12 +35,12 @@ char const * const Texture2D::getData() const
     return &(mData[0].r);
 }
 
-unsigned int Texture2D::getHeight() const
+uint Texture2D::getHeight() const
 {
     return mHeight;
 }
 
-unsigned int Texture2D::getWidth() const
+uint Texture2D::getWidth() const
 {
     return mWidth;
 }
@@ -52,8 +52,8 @@ void Texture2D::loadBMP_custom(const char * imagepath, Texture2D & texture)
 
     // Data read from the header of the BMP file
     unsigned char header[54];
-    unsigned int dataPos;
-    unsigned int imageSize;
+    uint dataPos;
+    uint imageSize;
 
     // Open the file
     FILE * file = fopen(imagepath,"rb");

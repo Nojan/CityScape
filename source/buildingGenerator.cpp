@@ -3,6 +3,8 @@
 #include "texture.hpp"
 #include "color.hpp"
 
+#include "types.hpp"
+
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -60,7 +62,7 @@ void SetWindowColor(Color::rgb * textureData, Color::hsv color, const size_t bui
     }
 }
 
-void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsigned int height = 512, unsigned int windowSize = 8)
+void GenerateBuildingTexture(Texture2D & texture, uint width = 512, uint height = 512, uint windowSize = 8)
     {
         assert(windowSize>2);
         assert(width>=windowSize);
@@ -248,9 +250,9 @@ void GenerateBuildingTexture(Texture2D & texture, unsigned int width = 512, unsi
     RenderableTextureInstance * GenerateBox(const float width, const float length, const float height)
     {
         assert( width>0 && length>0 && height>0 );
-        const unsigned int windowSize = 1;
-        const unsigned int windowPixelSize = 8;
-        const unsigned int texturePixelSize = 512;
+        const uint windowSize = 1;
+        const uint windowPixelSize = 8;
+        const uint texturePixelSize = 512;
         const float textureWindowRatio = static_cast<float>(windowPixelSize)/static_cast<float>(texturePixelSize);
         const float widthf  = static_cast<float>(windowSize*width);
         const float lengthf = static_cast<float>(windowSize*length);

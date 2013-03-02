@@ -26,10 +26,10 @@ namespace Street_Generator
         BoundingBox2D bb;
     };
 
-    void GenerateStreetConfiguration(const unsigned int width, const unsigned int length, vector<Area> & streetConfiguration)
+    void GenerateStreetConfiguration(const uint width, const uint length, vector<Area> & streetConfiguration)
     {
         assert( streetConfiguration.empty() );
-        const unsigned int size = width*length;
+        const uint size = width*length;
         streetConfiguration.resize(size);
 
         vector<float> widthSideA;
@@ -40,7 +40,7 @@ namespace Street_Generator
 
         bool isPair = true;
         float sum = 0;
-        for(unsigned int i=1; i<(width+1); ++i)
+        for(uint i=1; i<(width+1); ++i)
         {
             if(isPair)
                 sum += static_cast<float>(rand()%2+2);
@@ -53,7 +53,7 @@ namespace Street_Generator
 
         isPair = true;
         sum = 0;
-        for(unsigned int i=1; i<(length+1); ++i)
+        for(uint i=1; i<(length+1); ++i)
         {
             if(isPair)
                 sum += static_cast<float>(rand()%2+2);
@@ -65,15 +65,15 @@ namespace Street_Generator
         }
 
         bool isLinePair = true;
-        for(unsigned int i=0; i<width; ++i )
+        for(uint i=0; i<width; ++i )
         {
-            const unsigned int iOfsset = i*width;
+            const uint iOfsset = i*width;
             bool isColPair = true;
             const float minWidth = widthSideA[i];
             const float maxWidth = widthSideA[i+1];
-            for(unsigned int j=0; j<length; ++j)
+            for(uint j=0; j<length; ++j)
             {
-                const unsigned int index = iOfsset + j;
+                const uint index = iOfsset + j;
                 const float minLength = widthSideB[j];
                 const float maxLength = widthSideB[j+1];
 
@@ -112,10 +112,10 @@ namespace Street_Generator
         }
     }
 
-    void GenerateStreetScene(const unsigned int width, const unsigned int length, vector<RenderableInstance*>& buildingInstances, vector<RenderableInstance*>& streetInstances, vector<Renderable*>& scene)
+    void GenerateStreetScene(const uint width, const uint length, vector<RenderableInstance*>& buildingInstances, vector<RenderableInstance*>& streetInstances, vector<Renderable*>& scene)
     {
         assert( scene.empty() );
-        const unsigned int size = width*length;
+        const uint size = width*length;
         vector<Area> streetConfiguration;
         GenerateStreetConfiguration(width, length, streetConfiguration);
         assert( size == streetConfiguration.size() );
@@ -124,12 +124,12 @@ namespace Street_Generator
         Renderable * street = new Renderable();
         RenderableMaterialInstance * streetInstance = new RenderableMaterialInstance();
 
-        for(unsigned int i=0; i<width; ++i )
+        for(uint i=0; i<width; ++i )
         {
-            const unsigned int iOfsset = i*width;
-            for(unsigned int j=0; j<length; ++j)
+            const uint iOfsset = i*width;
+            for(uint j=0; j<length; ++j)
             {
-                const unsigned int index = iOfsset + j;
+                const uint index = iOfsset + j;
                 const AreaType type = streetConfiguration[index].type;
                 const BoundingBox2D bbox = streetConfiguration[index].bb;
                 const vec2 position = bbox.Min();

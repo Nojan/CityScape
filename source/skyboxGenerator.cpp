@@ -4,6 +4,8 @@
 #include "skybox.hpp"
 #include "texture.hpp"
 
+#include "types.hpp"
+
 #include <random>
 
 using namespace std;
@@ -11,7 +13,7 @@ using namespace std;
 namespace Building_Generator
 {
 
-void GenerateSkyboxTexture(Texture2D& texture, unsigned int length)
+void GenerateSkyboxTexture(Texture2D& texture, uint length)
 {
     const size_t textureSize = static_cast<size_t>(length*length);
 
@@ -35,7 +37,7 @@ void GenerateSkyboxTexture(Texture2D& texture, unsigned int length)
 
 Skybox * GenerateSkybox()
 {
-    const unsigned int cubeLength = 1024;
+    const uint cubeLength = 1024;
     Texture2D xPos, xNeg, yPos, yNeg, zPos, zNeg;
 
     GenerateSkyboxTexture(xPos, cubeLength);
