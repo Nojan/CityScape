@@ -138,8 +138,20 @@ namespace Street_Generator
                 if( AreaType::building == type )
                 {
                     Renderable * renderable = new Renderable();
-                    const float height = static_cast<float>(rand()%46+4);
-                    RenderableTextureInstance * building = Building_Generator::GenerateBox(bbox.Size().x, bbox.Size().y, height);
+                    RenderableTextureInstance * building = NULL;
+                    if(1 < rand()%10)
+                    {
+                        const float height = static_cast<float>(rand()%20+5);
+                        building = Building_Generator::GenerateBox(bbox.Size().x, bbox.Size().y, height);
+                    }
+                    else
+                    {
+                        const float height = static_cast<float>(rand()%25+30);
+                        const uint layerCount = 2+rand()%3;
+                        const float layerRatio = static_cast<float>(rand()%4)*0.1f;
+                        building = Building_Generator::GenerateLayeredBox(bbox.Size().x, bbox.Size().y, height, layerCount, layerRatio);
+                    }
+                    assert(NULL != building);
                     buildingInstances.push_back(building);
                     matTransform = translate(matTransform, vec3(bbox.Size().x/2.f, 0.f, bbox.Size().y/2.f));
                     renderable->Init(matTransform, building);

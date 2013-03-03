@@ -4,9 +4,12 @@
 #include "renderableMaterial.hpp"
 #include "renderableTexture.hpp"
 
+#include "types.hpp"
+
 namespace Building_Generator
 {
     RenderableTextureInstance * GenerateBox(const float width, const float length, const float height);
+    RenderableTextureInstance * GenerateLayeredBox(const float width, const float length, const float height, const uint layer, const float layerRatio);
     RenderableMaterialInstance * GenerateFloor(const float width, const float length);
 }
 

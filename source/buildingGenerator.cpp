@@ -3,8 +3,6 @@
 #include "texture.hpp"
 #include "color.hpp"
 
-#include "types.hpp"
-
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -312,6 +310,100 @@ void GenerateBuildingTexture(Texture2D & texture, uint width = 512, uint height 
         subMesh.Transform(mat3(rotation));
         mesh.AppendMesh(subMesh);
 
+        instance->index.insert(instance->index.end(), mesh.index.begin(), mesh.index.end());
+        instance->vertexPosition.insert(instance->vertexPosition.end(), mesh.vertexPosition.begin(), mesh.vertexPosition.end());
+        instance->vertexNormal.insert(instance->vertexNormal.end(), mesh.vertexNormal.begin(), mesh.vertexNormal.end());
+        instance->uv.insert(instance->uv.end(), mesh.uv.begin(), mesh.uv.end());
+
+        GenerateBuildingTexture(*(instance->texture), texturePixelSize, texturePixelSize, windowPixelSize);
+
+        return instance;
+    }
+
+    RenderableTextureInstance * GenerateLayeredBox(const float width, const float length, const float height, const uint layer, const float layerRatio)
+    {
+        assert( width>0 && length>0 && height>0 );
+        assert( layerRatio>=0 && layerRatio<=1 );
+        const uint windowSize = 1;
+        const uint windowPixelSize = 8;
+        const uint texturePixelSize = 512;
+        const float textureWindowRatio = static_cast<float>(windowPixelSize)/static_cast<float>(texturePixelSize);
+        const float widthf  = static_cast<float>(windowSize*width);
+        const float lengthf = static_cast<float>(windowSize*length);
+        const float heightf = static_cast<float>(windowSize*height);
+        const float widthRatio  = widthf*textureWindowRatio;
+        const float lengthRatio = lengthf*textureWindowRatio;
+        const float heightRatio = heightf*textureWindowRatio;
+
+        RenderableTextureInstance * instance = new RenderableTextureInstance();
+
+        Mesh mesh;
+        Mesh subMesh;
+        mat4 rotation = mat4(1.f);
+        const vec3 & vecUp = vec3(0.f, 1.f, 0.f);
+
+        for(uint indexLayer=0; indexLayer<layer; ++indexLayer)
+        {
+            const float indexLayerf = static_cast<float>(indexLayer);
+            const float layerHeight = heightf/static_cast<float>(layer);
+            const float layerWidth = widthf*(1.f - indexLayerf*layerRatio);
+            const float layerLength = lengthf*(1.f - indexLayerf*layerRatio);
+            const vec3 layerBaseHeight = layerHeight*indexLayerf*vecUp;
+
+            //texture coord
+            const vec2 coordHeight(heightRatio*indexLayerf/static_cast<float>(layer), heightRatio*(indexLayerf+1.f)/static_cast<float>(layer));
+
+            float periRatio = widthRatio;
+            float lastPeriRatio = 0.f;
+
+            //roof
+            rotation = rotate(mat4(1.f), -90.f, vec3(1.f, 0.f, 0.f)); //WTF not rad ?
+            subMesh.Clear();
+            CreateQuad(subMesh, layerWidth, layerLength, vec2(0.f, 0.f), vec2(0.f, 0.f));
+            subMesh.Transform(mat3(rotation));
+            subMesh.Transform(vec3(-layerWidth*0.5f, layerHeight, layerLength*0.5f) );
+            subMesh.Transform(layerBaseHeight);
+            mesh.AppendMesh(subMesh);
+
+            //wall
+            rotation = mat4(1.f);
+            subMesh.Clear();
+            CreateQuad(subMesh, layerWidth, layerHeight, vec2(0.f, coordHeight.x), vec2(periRatio, coordHeight.y));
+            lastPeriRatio = periRatio;
+            subMesh.Transform(vec3(-layerWidth*0.5f, 0.f, layerLength*0.5f));
+            subMesh.Transform(layerBaseHeight);
+            mesh.AppendMesh(subMesh);
+
+            subMesh.Clear();
+            rotation = rotate(rotation, 90.f, vecUp); //WTF not rad ?
+            periRatio+=lengthRatio;
+            CreateQuad(subMesh, layerLength, layerHeight, vec2(lastPeriRatio, coordHeight.x), vec2(periRatio, coordHeight.y));
+            lastPeriRatio = periRatio;
+            subMesh.Transform(vec3(-layerLength*0.5f, 0.f, layerWidth*0.5f));
+            subMesh.Transform(mat3(rotation));
+            subMesh.Transform(layerBaseHeight);
+            mesh.AppendMesh(subMesh);
+
+            subMesh.Clear();
+            rotation = rotate(rotation, 90.f, vecUp); //WTF not rad ?
+            periRatio+=widthRatio;
+            CreateQuad(subMesh, layerWidth, layerHeight, vec2(lastPeriRatio, coordHeight.x), vec2(periRatio, coordHeight.y));
+            lastPeriRatio = periRatio;
+            subMesh.Transform(vec3(-layerWidth*0.5f, 0.f, layerLength*0.5f));
+            subMesh.Transform(mat3(rotation));
+            subMesh.Transform(layerBaseHeight);
+            mesh.AppendMesh(subMesh);
+
+            subMesh.Clear();
+            rotation = rotate(rotation, 90.f, vecUp); //WTF not rad ?
+            periRatio+=lengthRatio;
+            CreateQuad(subMesh, layerLength, layerHeight, vec2(lastPeriRatio, coordHeight.x), vec2(periRatio, coordHeight.y));
+            lastPeriRatio = periRatio;
+            subMesh.Transform(vec3(-layerLength*0.5f, 0.f, layerWidth*0.5f));
+            subMesh.Transform(mat3(rotation));
+            subMesh.Transform(layerBaseHeight);
+            mesh.AppendMesh(subMesh);
+        }
         instance->index.insert(instance->index.end(), mesh.index.begin(), mesh.index.end());
         instance->vertexPosition.insert(instance->vertexPosition.end(), mesh.vertexPosition.begin(), mesh.vertexPosition.end());
         instance->vertexNormal.insert(instance->vertexNormal.end(), mesh.vertexNormal.begin(), mesh.vertexNormal.end());
